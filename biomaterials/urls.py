@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import BiomaterialListAPIView
+from .views import biomaterial_list, biomaterial_detail
 
 urlpatterns = [
-    path("biomaterials/", BiomaterialListAPIView.as_view(), name="biomaterial-list"),
+    path("biomaterials/", biomaterial_list, name="biomaterial-list"),
+    path("biomaterials/<int:pk>/", biomaterial_detail, name="biomaterial-detail"),
 ]
