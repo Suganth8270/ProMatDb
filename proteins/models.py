@@ -7,8 +7,8 @@ class Protein(models.Model):
     pdb_id = models.CharField(max_length=10, blank=True)
     organism = models.CharField(max_length=200)
     sequence = models.TextField()
-    molecular_weight = models.FloatField()
-    function = models.TextField()
+    molecular_weight = models.FloatField(default=0.0)
+    function = models.TextField(blank=True)
 
     def __str__(self):
         return self.protein_name

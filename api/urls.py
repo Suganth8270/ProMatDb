@@ -1,7 +1,6 @@
-from django.urls import path
-from .views import protein_list, fetch_uniprot
+from django.urls import path, include
 
 urlpatterns = [
-    path('proteins/', protein_list, name='protein-list'),
-    path('uniprot/<str:uniprot_id>/', fetch_uniprot, name='fetch-uniprot'),
+    path("", include("proteins.urls")),
+    path("", include("biomaterials.urls")),
 ]
