@@ -31,3 +31,42 @@ def fetch_uniprot(request, uniprot_id):
         "sequence": data["sequence"]["value"],
         "length": data["sequence"]["length"]
     })
+
+
+@api_view(['POST'])
+def import_uniprot(request, uniprot_id):
+    url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.json"
+
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        return Response({"error": "Protein not found"}, status=404)
+
+    data = response.json()
+
+    protein_name = data["proteinDescription"]["recommendedName"]["fullName"]["value"]
+    organism = data["organism"]["scientificName"]
+    sequence = data["sequence"]["value"]
+
+    protein, created = Protein.objects.get_or_create(
+        uniprot_id=uniprot_id,
+        defaults={
+            "protein_name": protein_name,
+            "organism": organism,
+            "sequence": sequence,
+            "pdb_id": "",
+            "molecular_weight": 0.0,
+            "function": ""
+        }
+    )
+
+    if created:
+        return Response({
+            "message": "Protein imported successfully",
+            "protein_id": protein.id
+        })
+
+    return Response({
+        "message": "Protein already exists",
+        "protein_id": protein.id
+    })
