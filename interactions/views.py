@@ -13,3 +13,13 @@ def interaction_list(request):
     interactions = Interaction.objects.all()
     serializer = InteractionSerializer(interactions, many=True)
     return Response(serializer.data)
+
+@api_view(["GET"])
+def interaction_detail(request, pk):
+    try:
+        interaction = Interaction.objects.get(pk=pk)
+    except Interaction.DoesNotExist:
+        return Response({"error": "Interaction not found"}, status=404)
+
+    serializer = InteractionSerializer(interaction)
+    return Response(serializer.data)
