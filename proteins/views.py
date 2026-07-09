@@ -8,7 +8,7 @@ from api.serializers import ProteinSerializer
 
 @api_view(['GET'])
 def protein_list(request):
-    proteins = Protein.objects.all()
+    proteins = Protein.objects.order_by("protein_name")
     serializer = ProteinSerializer(proteins, many=True)
     return Response(serializer.data)
 
