@@ -1,5 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.settings import api_settings
 import requests
 
 from .models import Protein
@@ -8,10 +10,22 @@ from api.serializers import ProteinSerializer
 
 @api_view(['GET'])
 def protein_list(request):
-    proteins = Protein.objects.order_by("protein_name")
-    serializer = ProteinSerializer(proteins, many=True)
-    return Response(serializer.data)
+    search = request.GET.get("search")
 
+    if search:
+        proteins = Protein.objects.filter(
+            protein_name__icontains=search
+        ).order_by("protein_name")
+    else:
+        proteins = Protein.objects.order_by("protein_name")
+
+    paginator = PageNumberPagination()
+    paginator.page_size = api_settings.PAGE_SIZE
+
+    result_page = paginator.paginate_queryset(proteins, request)
+    serializer = ProteinSerializer(result_page, many=True)
+
+    return paginator.get_paginated_response(serializer.data)
 
 @api_view(['GET'])
 def fetch_uniprot(request, uniprot_id):
