@@ -60,6 +60,19 @@ def import_uniprot(request, uniprot_id):
         }
     )
 
+@api_view(['GET'])
+def protein_detail(request, pk):
+    try:
+        protein = Protein.objects.get(pk=pk)
+    except Protein.DoesNotExist:
+        return Response(
+            {"error": "Protein not found"},
+            status=404
+        )
+
+    serializer = ProteinSerializer(protein)
+    return Response(serializer.data)
+
     if created:
         return Response({
             "message": "Protein imported successfully",
