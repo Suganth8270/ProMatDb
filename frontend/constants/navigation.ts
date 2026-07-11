@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import type { NavItem } from "@/types/navigation";
 
-export const NAV_ITEMS: NavItem[] = [
+export const navigationItems: NavItem[] = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
   { label: "Proteins", href: "/proteins", icon: Dna },
   { label: "Biomaterials", href: "/biomaterials", icon: TestTube2 },
