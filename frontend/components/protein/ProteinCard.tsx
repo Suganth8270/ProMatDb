@@ -2,6 +2,8 @@ import { Dna, Database, Weight, FlaskConical, ArrowRight } from "lucide-react";
 import { Protein } from "@/types/protein";
 import Button from "@/components/common/Button";
 import Badge from "@/components/common/Badge";
+import Link from "next/link";
+
 
 interface ProteinCardProps {
   protein: Protein;
@@ -9,6 +11,7 @@ interface ProteinCardProps {
 
 export default function ProteinCard({ protein }: ProteinCardProps) {
   return (
+   <Link href={`/proteins/${protein.id}`}>
     <div className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
 
       {/* Header */}
@@ -102,5 +105,6 @@ export default function ProteinCard({ protein }: ProteinCardProps) {
       </div>
 
     </div>
+    </Link>
   );
 }

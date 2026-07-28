@@ -1,7 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
 import SearchBar from "@/components/common/SearchBar";
-import DashboardLayout from "@/components/layout/DashboardLayout";
 import ProteinCard from "@/components/protein/ProteinCard";
 import { useFetch } from "@/hooks/useFetch";
 import { getProteins } from "@/services/api";
@@ -31,9 +30,9 @@ const filteredProteins = useMemo(() => {
 }, [proteins, search]);
 
   return (
-    <DashboardLayout>
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-8">
+    
+     <div className="w-full">
+          <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900">
             Protein Explorer
           </h1>
@@ -75,6 +74,6 @@ const filteredProteins = useMemo(() => {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    
   );
 }

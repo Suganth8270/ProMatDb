@@ -11,5 +11,9 @@ class Interaction(models.Model):
     interaction_type = models.CharField(max_length=100)
     reference = models.TextField()
 
+    # Audit Fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return f"{self.protein} - {self.biomaterial}"

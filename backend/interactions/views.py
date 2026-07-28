@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from .models import Interaction
 from .serializers import InteractionSerializer
 
+from proteins.models import Protein
+from biomaterials.models import Biomaterial
+
 
 @api_view(["GET"])
 def interaction_list(request):
@@ -40,4 +43,28 @@ def interaction_detail(request, pk):
           
         return Response({"error": "Interaction not found"}, status=404)
     serializer = InteractionSerializer(interaction)
+    return Response(serializer.data)
+
+@api_view(["GET"])
+def protein_interactions(request, protein_id):
+    try:
+        Protein.objects.get(id=protein_id)
+    except Protein.DoesNotExist:
+        return Response({"error": "Protein not found"}, status=404)
+
+    interactions = Interaction.objects.filter(protein_id=protein_id)
+
+    serializer = InteractionSerializer(interactions, many=True)
+    return Response(serializer.data)
+
+@api_view(["GET"])
+def biomaterial_interactions(request, biomaterial_id):
+    try:
+        Biomaterial.objects.get(id=biomaterial_id)
+    except Biomaterial.DoesNotExist:
+        return Response({"error": "Biomaterial not found"}, status=404)
+
+    interactions = Interaction.objects.filter(biomaterial_id=biomaterial_id)
+
+    serializer = InteractionSerializer(interactions, many=True)
     return Response(serializer.data)
