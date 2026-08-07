@@ -1,36 +1,36 @@
-import requests
+from .pubchem_provider import PubChemProvider
+from .chebi_provider import ChEBIProvider
 
 
 class BiomaterialSearchService:
 
-    PUBCHEM_BASE = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
+    providers = [
+        PubChemProvider(),
+        ChEBIProvider(),
+    ]
 
     @classmethod
-    def search(cls, name):
+    def search(cls, query):
 
-        try:
-            url = (
-                f"{cls.PUBCHEM_BASE}/compound/name/"
-                f"{name}/property/"
-                "MolecularFormula,MolecularWeight,IUPACName/JSON"
-            )
+        print(f"Searching: {query}")
 
-            response = requests.get(url, timeout=15)
+        results = []
 
-            if response.status_code != 200:
-                return None
+        for provider in cls.providers:
+            print(f"Provider: {provider.source_name()}")
 
-            data = response.json()
+            try:
+                data = provider.search(query)
 
-            properties = data["PropertyTable"]["Properties"][0]
+                print("Result:", data)
 
-            return {
-                "name": name,
-                "pubchem_id": properties.get("CID"),
-                "formula": properties.get("MolecularFormula"),
-                "weight": properties.get("MolecularWeight"),
-                "iupac_name": properties.get("IUPACName"),
-            }
+                if data:
+                    results.append({
+                        "source": provider.source_name(),
+                        "data": data,
+                    })
 
-        except Exception:
-            return None
+            except Exception as e:
+                print("Error:", e)
+
+        return results

@@ -19,13 +19,8 @@ def protein_list(request):
     else:
         proteins = Protein.objects.order_by("protein_name")
 
-    paginator = PageNumberPagination()
-    paginator.page_size = api_settings.PAGE_SIZE
-
-    result_page = paginator.paginate_queryset(proteins, request)
-    serializer = ProteinSerializer(result_page, many=True)
-
-    return paginator.get_paginated_response(serializer.data)
+    serializer = ProteinSerializer(proteins, many=True)
+    return Response(serializer.data)
 
 
 @api_view(["GET"])

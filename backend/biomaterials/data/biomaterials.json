@@ -1,0 +1,162 @@
+[
+  {
+    "name": "Collagen",
+    "category": "Protein-based",
+    "chemical_type": "Structural protein",
+    "source": "Animal (bovine, porcine, marine)",
+    "description": "The most abundant structural protein in mammals, providing tensile strength and structural support to connective tissue.",
+    "applications": "Tissue engineering scaffolds, wound dressings, skin substitutes, bone grafts"
+  },
+  {
+    "name": "Chitosan",
+    "category": "Polysaccharide-based",
+    "chemical_type": "Linear polysaccharide",
+    "source": "Deacetylated chitin from crustacean shells",
+    "description": "A biodegradable, biocompatible polysaccharide derived from chitin with antimicrobial properties.",
+    "applications": "Wound healing, drug delivery, hemostatic agents, tissue scaffolds"
+  },
+  {
+    "name": "Cellulose",
+    "category": "Polysaccharide-based",
+    "chemical_type": "Linear polysaccharide",
+    "source": "Plant cell walls, bacterial fermentation",
+    "description": "A structural polysaccharide made of glucose units, widely used in nanocellulose and bacterial cellulose forms.",
+    "applications": "Wound dressings, drug delivery matrices, scaffolds, packaging"
+  },
+  {
+    "name": "Alginate",
+    "category": "Polysaccharide-based",
+    "chemical_type": "Anionic polysaccharide",
+    "source": "Brown seaweed (algae)",
+    "description": "A biocompatible, gel-forming polysaccharide that crosslinks in the presence of divalent cations like calcium.",
+    "applications": "Cell encapsulation, wound dressings, hydrogel scaffolds, drug delivery"
+  },
+  {
+    "name": "Gelatin",
+    "category": "Protein-based",
+    "chemical_type": "Denatured protein",
+    "source": "Hydrolyzed collagen (animal)",
+    "description": "A water-soluble protein derived from partial hydrolysis of collagen, commonly used in hydrogel formulations.",
+    "applications": "Hydrogels, drug delivery capsules, tissue scaffolds, bioprinting bioinks"
+  },
+  {
+    "name": "Silk Fibroin",
+    "category": "Protein-based",
+    "chemical_type": "Structural protein",
+    "source": "Silkworm (Bombyx mori) cocoons",
+    "description": "A natural fibrous protein known for high tensile strength, biocompatibility, and controllable degradation.",
+    "applications": "Sutures, tissue scaffolds, drug delivery, bone and cartilage regeneration"
+  },
+  {
+    "name": "PLGA",
+    "category": "Synthetic polymer",
+    "chemical_type": "Aliphatic polyester copolymer",
+    "source": "Synthetic (lactic acid and glycolic acid copolymer)",
+    "description": "A biodegradable, FDA-approved copolymer whose degradation rate can be tuned by adjusting the lactide-to-glycolide ratio.",
+    "applications": "Drug delivery microspheres, sutures, tissue engineering scaffolds"
+  },
+  {
+    "name": "PLA",
+    "category": "Synthetic polymer",
+    "chemical_type": "Aliphatic polyester",
+    "source": "Synthetic (fermented plant starch)",
+    "description": "A biodegradable thermoplastic polyester derived from renewable resources, commonly used in 3D-printed scaffolds.",
+    "applications": "Orthopedic implants, sutures, 3D-printed scaffolds, drug delivery"
+  },
+  {
+    "name": "Hydroxyapatite",
+    "category": "Ceramic",
+    "chemical_type": "Calcium phosphate mineral",
+    "source": "Synthetic or derived from bone/coral",
+    "description": "A naturally occurring mineral form of calcium apatite that closely resembles the mineral component of bone.",
+    "applications": "Bone grafts, dental implants, bone cement, coating for orthopedic implants"
+  },
+  {
+    "name": "Bioactive Glass",
+    "category": "Ceramic",
+    "chemical_type": "Silicate-based glass",
+    "source": "Synthetic (SiO2-CaO-Na2O-P2O5 system)",
+    "description": "A biocompatible glass that bonds to bone tissue by forming a hydroxyapatite layer upon contact with body fluids.",
+    "applications": "Bone regeneration, dental applications, wound healing, scaffold coatings"
+  },
+  {
+    "name": "Titanium",
+    "category": "Metal",
+    "chemical_type": "Transition metal",
+    "source": "Synthetic (refined ore, often as Ti-6Al-4V alloy)",
+    "description": "A lightweight, corrosion-resistant metal with excellent biocompatibility and mechanical strength.",
+    "applications": "Orthopedic implants, dental implants, joint replacements, bone plates"
+  },
+  {
+    "name": "PEG",
+    "category": "Synthetic polymer",
+    "chemical_type": "Polyether",
+    "source": "Synthetic (ethylene oxide polymerization)",
+    "description": "Polyethylene glycol is a hydrophilic, non-immunogenic polymer widely used to form hydrogels and modify drug pharmacokinetics.",
+    "applications": "Hydrogel scaffolds, drug delivery, PEGylation of proteins, cell encapsulation"
+  },
+  {
+    "name": "PCL",
+    "category": "Synthetic polymer",
+    "chemical_type": "Aliphatic polyester",
+    "source": "Synthetic (ring-opening polymerization of caprolactone)",
+    "description": "Polycaprolactone is a slow-degrading, biocompatible polyester with good mechanical properties for long-term scaffolds.",
+    "applications": "Long-term tissue scaffolds, drug delivery, sutures, 3D-printed constructs"
+  },
+  {
+    "name": "Hyaluronic Acid",
+    "category": "Polysaccharide-based",
+    "chemical_type": "Glycosaminoglycan",
+    "source": "Bacterial fermentation, animal connective tissue",
+    "description": "A naturally occurring glycosaminoglycan found in connective tissue, known for high water retention and viscoelasticity.",
+    "applications": "Dermal fillers, viscosupplementation, wound healing, hydrogel scaffolds"
+  },
+  {
+    "name": "Fibrin",
+    "category": "Protein-based",
+    "chemical_type": "Fibrous protein",
+    "source": "Derived from fibrinogen (blood plasma)",
+    "description": "A natural protein formed during blood clotting, used as a biological glue and cell delivery matrix.",
+    "applications": "Surgical sealants, cell delivery scaffolds, wound healing, tissue regeneration"
+  },
+  {
+    "name": "Elastin",
+    "category": "Protein-based",
+    "chemical_type": "Structural protein",
+    "source": "Animal connective tissue (aorta, ligaments)",
+    "description": "A highly elastic structural protein that provides resilience and stretch recovery to tissues like blood vessels and skin.",
+    "applications": "Vascular grafts, skin regeneration, elastic tissue scaffolds"
+  },
+  {
+    "name": "Keratin",
+    "category": "Protein-based",
+    "chemical_type": "Structural protein",
+    "source": "Hair, wool, feathers",
+    "description": "A fibrous structural protein known for mechanical durability and self-assembly properties in regenerated form.",
+    "applications": "Wound dressings, nerve regeneration, drug delivery, hemostatic materials"
+  },
+  {
+    "name": "Dextran",
+    "category": "Polysaccharide-based",
+    "chemical_type": "Branched polysaccharide",
+    "source": "Bacterial fermentation (Leuconostoc species)",
+    "description": "A branched polysaccharide composed of glucose units, widely used as a hydrogel and drug carrier backbone.",
+    "applications": "Drug delivery, hydrogels, plasma volume expanders, bioprinting"
+  },
+  {
+    "name": "Agarose",
+    "category": "Polysaccharide-based",
+    "chemical_type": "Linear polysaccharide",
+    "source": "Red seaweed (agar)",
+    "description": "A gel-forming polysaccharide purified from agar, valued for thermoreversible gelation and biocompatibility.",
+    "applications": "Cell culture scaffolds, electrophoresis gels, tissue engineering matrices"
+  },
+  {
+    "name": "Calcium Phosphate",
+    "category": "Ceramic",
+    "chemical_type": "Inorganic mineral salt",
+    "source": "Synthetic",
+    "description": "A family of biocompatible mineral compounds structurally similar to the inorganic phase of bone.",
+    "applications": "Bone cement, bone graft substitutes, dental fillers, coatings for implants"
+  }
+]

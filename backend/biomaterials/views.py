@@ -35,13 +35,12 @@ def search_biomaterial(request):
     if not name:
         return Response({"error": "Missing biomaterial name"}, status=400)
 
-    result = BiomaterialSearchService.search(name)
+    results = BiomaterialSearchService.search(name)
 
-    if not result:
+    if not results:
         return Response({"error": "No biomaterial found"}, status=404)
 
-    return Response(result)
-
+    return Response(results)
 
 @api_view(["GET"])
 def search_pubchem(request):
@@ -139,6 +138,62 @@ def save_imported_pubchem(request, cid):
     return Response(
         {
             "message": "Biomaterial imported successfully.",
+            "created": True,
+            "biomaterial": serializer.data,
+        },
+        status=status.HTTP_201_CREATED,
+    )
+
+
+@api_view(["POST"])
+def manual_import_biomaterial(request):
+    """
+    Manually create a biomaterial from user-supplied JSON,
+    without going through PubChem or ChEBI.
+    Prevents duplicates by name (case-insensitive).
+    """
+
+    payload = request.data
+
+    name = (payload.get("name") or "").strip()
+
+    if not name:
+        return Response(
+            {"error": "Name is required"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Prevent duplicate biomaterials by name (case-insensitive)
+    existing = Biomaterial.objects.filter(name__iexact=name).first()
+
+    if existing:
+        return Response(
+            {
+                "message": "Biomaterial already exists",
+                "created": False,
+            }
+        )
+
+    biomaterial = Biomaterial.objects.create(
+        name=name,
+        category=payload.get("category", ""),
+        chemical_type=payload.get("chemical_type", ""),
+        source=payload.get("source", ""),
+        description=payload.get("description", ""),
+        applications=payload.get("applications", ""),
+        molecular_formula=payload.get("molecular_formula", ""),
+        molecular_weight=payload.get("molecular_weight", ""),
+        biocompatibility=payload.get("biocompatibility", ""),
+        image_url=payload.get("image_url", ""),
+        doi=payload.get("doi", ""),
+        pubmed_url=payload.get("pubmed_url", ""),
+    )
+
+    serializer = BiomaterialSerializer(biomaterial)
+
+    return Response(
+        {
+            "message": "Biomaterial imported successfully",
             "created": True,
             "biomaterial": serializer.data,
         },
