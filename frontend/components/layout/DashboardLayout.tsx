@@ -26,7 +26,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <Navbar onMenuClick={() => setIsSidebarOpen(true)} />
 
         <main className="flex-1 overflow-y-auto">
-          <div className="px-4 py-8 sm:px-6 lg:px-10">{children}</div>
+          <div className="mx-auto w-full max-w-[1600px] px-4 py-8 animate-fade-in sm:px-6 lg:px-10">
+            {children}
+          </div>
           <Footer />
         </main>
       </div>

@@ -64,8 +64,8 @@ export async function getProteins(): Promise<Protein[]> {
     throw new Error("Failed to fetch proteins.");
   }
 
-  const data: ProteinResponse = await response.json();
-  return data.results;
+const data: Protein[] = await response.json();
+return data;
 }
 
 export async function getProtein(id: string | number): Promise<Protein> {
@@ -149,7 +149,7 @@ export async function search(query: string): Promise<SearchResult> {
 
 export async function fetchUniProt(uniprotId: string) {
   const response = await fetch(
-    `${API_BASE_URL}/uniprot/${uniprotId}/`,
+    `${API_BASE_URL}/proteins/uniprot/${uniprotId}/`,
     {
       cache: "no-store",
     }
@@ -164,7 +164,7 @@ export async function fetchUniProt(uniprotId: string) {
 
 export async function importUniProt(uniprotId: string) {
   const response = await fetch(
-    `${API_BASE_URL}/import/${uniprotId}/`,
+    `${API_BASE_URL}/proteins/import/${uniprotId}/`,
     {
       method: "POST",
     }
@@ -179,7 +179,7 @@ export async function importUniProt(uniprotId: string) {
 
 export async function fetchPDB(pdbId: string) {
   const response = await fetch(
-    `${API_BASE_URL}/pdb/${pdbId}/`,
+    `${API_BASE_URL}/proteins/pdb/${pdbId}/`,
     {
       cache: "no-store",
     }
@@ -197,7 +197,7 @@ export async function linkPDB(
   pdbId: string
 ) {
   const response = await fetch(
-    `${API_BASE_URL}/link-pdb/`,
+    `${API_BASE_URL}/proteins/link-pdb/`,
     {
       method: "POST",
       headers: {

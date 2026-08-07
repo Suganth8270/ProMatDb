@@ -66,7 +66,6 @@ export default function MolViewer({
   height = "100%",
   showControls = false,
 }: MolViewerProps) {
-    console.log("MolViewer received PDB ID:", pdbId);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pluginRef = useRef<PluginUIContext | null>(null);
   const requestIdRef = useRef(0);
@@ -213,9 +212,9 @@ export default function MolViewer({
       <div ref={containerRef} className="absolute inset-0" />
 
       {status === "loading" && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white/80 backdrop-blur-sm">
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white/85 backdrop-blur-sm">
           <div
-            className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600"
+            className="h-10 w-10 animate-spin rounded-full border-4 border-teal-100 border-t-teal-600"
             role="status"
             aria-label="Loading structure"
           />
@@ -227,7 +226,7 @@ export default function MolViewer({
 
       {status === "error" && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white p-6 text-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600">
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-100 text-red-600">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -250,7 +249,7 @@ export default function MolViewer({
             <button
               type="button"
               onClick={retry}
-              className="mt-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="mt-1 rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
             >
               Try again
             </button>
@@ -259,7 +258,7 @@ export default function MolViewer({
       )}
 
       {status === "idle" && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-white text-gray-400">
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white text-gray-300">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -274,7 +273,7 @@ export default function MolViewer({
             <circle cx="12" cy="12" r="9" />
             <path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18M3 12h18" />
           </svg>
-          <p className="text-sm font-medium">No structure loaded</p>
+          <p className="text-sm font-medium text-gray-400">No structure loaded</p>
         </div>
       )}
     </div>

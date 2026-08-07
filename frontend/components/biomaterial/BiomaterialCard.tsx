@@ -1,132 +1,128 @@
-import type { Biomaterial } from "@/types/biomaterial";
-import {
-  Leaf,
-  Package,
-  FlaskConical,
-  ArrowRight,
-  ShieldCheck,
-} from "lucide-react";
+import { Database, Weight, FlaskConical, ArrowRight, Leaf } from "lucide-react";
+import { Biomaterial } from "@/types/biomaterial";
+import Button from "@/components/common/Button";
+import Badge from "@/components/common/Badge";
 import Link from "next/link";
+
 
 interface BiomaterialCardProps {
   biomaterial: Biomaterial;
 }
 
-export default function BiomaterialCard({
-  biomaterial,
-}: BiomaterialCardProps) {
+export default function BiomaterialCard({ biomaterial }: BiomaterialCardProps) {
   return (
-    <div className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+   <Link href={`/biomaterials/${biomaterial.id}`} className="block h-full">
+    <div className="group flex h-full flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-xl">
 
-      {/* Top Gradient */}
-      <div className="h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
-
-      <div className="p-6">
-
-        {/* Header */}
-        <div className="flex items-start justify-between">
-
-          <div className="flex gap-4">
-
-            <div className="h-20 w-20 overflow-hidden rounded-2xl border bg-white shadow-sm">
-
-  {biomaterial.image_url ? (
-    <img
-      src={biomaterial.image_url}
-      alt={biomaterial.name}
-      className="h-full w-full object-cover"
-    />
-  ) : (
-    <div className="flex h-full w-full items-center justify-center bg-emerald-100">
-      <Leaf className="h-8 w-8 text-emerald-700" />
-    </div>
-  )}
-
-</div>
-
-            <div>
-
-              <h2 className="text-2xl font-bold text-slate-900">
-                {biomaterial.name}
-              </h2>
-
-              <p className="mt-1 text-slate-500">
-                {biomaterial.category}
-              </p>
-
-            </div>
-
+      {/* Header */}
+      <div className="mb-6 flex items-start justify-between gap-3">
+        <div className="flex min-w-0 gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-teal-100 transition-colors duration-300 group-hover:bg-teal-600">
+            <Leaf className="h-6 w-6 text-[#0F766E] transition-colors duration-300 group-hover:text-white" />
           </div>
 
-          <span className="rounded-full bg-emerald-100 px-4 py-1 text-sm font-semibold text-emerald-700">
-            Biomaterial
-          </span>
+          <div className="min-w-0">
+            <h2
+              className="truncate text-xl font-bold text-slate-900"
+              title={biomaterial.name}
+            >
+              {biomaterial.name}
+            </h2>
 
+            <p className="mt-1 truncate text-sm text-slate-500">
+              {biomaterial.source}
+            </p>
+          </div>
         </div>
 
-        {/* Divider */}
-        <div className="my-6 border-t border-slate-100" />
+        <Badge color="cyan">Biomaterial</Badge>
+      </div>
 
-        {/* Source */}
-        <div className="rounded-2xl bg-slate-50 p-4">
+      {/* Information */}
+      <div className="space-y-3">
 
+        <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
           <div className="flex items-center gap-2">
-
-            <Package className="h-5 w-5 text-cyan-600" />
-
-            <span className="font-semibold text-slate-900">
-              Source
+            <Database className="h-4 w-4 text-cyan-600" />
+            <span className="font-semibold text-slate-700">
+              Chemical Type
             </span>
-
           </div>
 
-          <p className="mt-2 text-slate-600">
-            {biomaterial.source}
-          </p>
-
+          {biomaterial.chemical_type ? (
+            <Badge color="teal">
+              {biomaterial.chemical_type}
+            </Badge>
+          ) : (
+            <span className="text-sm font-medium text-slate-400">
+              Not specified
+            </span>
+          )}
         </div>
 
-        {/* Applications */}
-        <div className="mt-4 rounded-2xl bg-slate-50 p-4">
-
+        <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
           <div className="flex items-center gap-2">
-
-            <FlaskConical className="h-5 w-5 text-teal-600" />
-
-            <span className="font-semibold text-slate-900">
-              Applications
+            <Database className="h-4 w-4 text-indigo-600" />
+            <span className="font-semibold text-slate-700">
+              Category
             </span>
-
           </div>
 
-          <p className="mt-2 line-clamp-3 text-slate-600">
-            {biomaterial.applications}
-          </p>
-
+          {biomaterial.category ? (
+            <Badge color="indigo">{biomaterial.category}</Badge>
+          ) : (
+            <span className="text-sm font-medium text-slate-400">
+              Not specified
+            </span>
+          )}
         </div>
 
-        {/* Status */}
-        <div className="mt-4 flex items-center gap-2 rounded-xl bg-emerald-50 p-3">
+        <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <Weight className="h-4 w-4 text-teal-600" />
+            <span className="font-semibold text-slate-700">
+              Weight
+            </span>
+          </div>
 
-          <ShieldCheck className="h-5 w-5 text-emerald-600" />
-
-          <span className="text-sm font-medium text-emerald-700">
-            Biocompatibility Information Available
+          <span className="font-semibold text-slate-900">
+            {biomaterial.molecular_weight
+              ? `${biomaterial.molecular_weight} g/mol`
+              : "—"}
           </span>
-
         </div>
-
-        {/* Button */}
-        <Link
-          href={`/biomaterials/${biomaterial.id}`}
-          className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 py-3 font-semibold text-white transition-all duration-300 hover:scale-[1.02]"
-        >
-          Explore Biomaterial
-          <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-        </Link>
 
       </div>
 
+      {/* Applications */}
+      <div className="mt-6 flex-1 rounded-2xl bg-slate-50 p-4">
+        <div className="mb-2 flex items-center gap-2">
+          <FlaskConical className="h-4 w-4 text-cyan-600" />
+          <h3 className="font-semibold text-slate-900">
+            Applications
+          </h3>
+        </div>
+
+        <p
+          className="line-clamp-3 text-sm leading-6 text-slate-600"
+          title={biomaterial.applications}
+        >
+          {biomaterial.applications}
+        </p>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-6">
+        <Button
+          variant="outline"
+          className="w-full transition-colors duration-300 group-hover:bg-teal-700 group-hover:text-white"
+        >
+          View Details
+          <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+        </Button>
+      </div>
+
     </div>
+    </Link>
   );
 }
