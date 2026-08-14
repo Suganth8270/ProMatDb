@@ -1,6 +1,9 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
+import pandas as pd
+from django.db import transaction
 
 from .models import Biomaterial
 from .serializers import BiomaterialSerializer
@@ -196,6 +199,109 @@ def manual_import_biomaterial(request):
             "message": "Biomaterial imported successfully",
             "created": True,
             "biomaterial": serializer.data,
+        },
+        status=status.HTTP_201_CREATED,
+    )
+
+@api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser])
+def bulk_import_biomaterials(request):
+    """
+    Bulk import biomaterials from CSV or Excel.
+    """
+
+    if "file" not in request.FILES:
+        return Response(
+            {"error": "No file uploaded"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    file = request.FILES["file"]
+
+    try:
+        if file.name.endswith(".csv"):
+            df = pd.read_csv(file)
+
+        elif file.name.endswith(".xlsx"):
+            df = pd.read_excel(file)
+
+        else:
+            return Response(
+                {"error": "Only CSV and Excel files are supported."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    except Exception as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    required_columns = [
+        "name",
+        "category",
+        "chemical_type",
+        "source",
+        "description",
+        "applications",
+        "molecular_formula",
+        "molecular_weight",
+        "biocompatibility",
+        "doi",
+        "pubmed_url",
+    ]
+
+    missing = [c for c in required_columns if c not in df.columns]
+
+    if missing:
+        return Response(
+            {
+                "error": "Missing required columns",
+                "missing": missing,
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    imported = 0
+    duplicates = 0
+    failed = 0
+
+    with transaction.atomic():
+
+        for _, row in df.iterrows():
+
+            try:
+
+                name = str(row["name"]).strip()
+
+                if Biomaterial.objects.filter(name__iexact=name).exists():
+                    duplicates += 1
+                    continue
+
+                Biomaterial.objects.create(
+                    name=name,
+                    category=row.get("category", ""),
+                    chemical_type=row.get("chemical_type", ""),
+                    source=row.get("source", ""),
+                    description=row.get("description", ""),
+                    applications=row.get("applications", ""),
+                    molecular_formula=row.get("molecular_formula", ""),
+                    molecular_weight=row.get("molecular_weight", ""),
+                    biocompatibility=row.get("biocompatibility", ""),
+                    doi=row.get("doi", ""),
+                    pubmed_url=row.get("pubmed_url", ""),
+                )
+
+                imported += 1
+
+            except Exception:
+                failed += 1
+
+    return Response(
+        {
+            "imported": imported,
+            "duplicates": duplicates,
+            "failed": failed,
         },
         status=status.HTTP_201_CREATED,
     )

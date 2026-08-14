@@ -7,6 +7,7 @@ from .views import (
     import_pubchem,
     save_imported_pubchem,
     manual_import_biomaterial,
+    bulk_import_biomaterials,
 )
 
 urlpatterns = [
@@ -30,6 +31,14 @@ urlpatterns = [
         manual_import_biomaterial,
         name="manual-import-biomaterial",
     ),
+
+
+
+path(
+    "bulk-import/",
+    bulk_import_biomaterials,
+    name="bulk-import-biomaterials",
+),  
 
     # Biomaterial detail
     path(
