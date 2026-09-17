@@ -1,0 +1,130 @@
+/* ============================================================
+   ProMatDB — Reusable 3D Card System
+   Perspective, tilt, glass sheen and depth layering. Reads
+   only from the --color-* tokens already defined in
+   globals.css, so it inherits light/dark theming automatically
+   and introduces no parallel color system.
+   ============================================================ */
+
+.card3d {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 50%;
+  --card3d-accent: var(--color-primary);
+  --card3d-accent-soft: var(--color-glow);
+
+  position: relative;
+  perspective: 1400px;
+  perspective-origin: 50% 35%;
+  border-radius: 28px;
+  cursor: pointer;
+}
+
+.card3d--secondary { --card3d-accent: var(--color-secondary); }
+.card3d--indigo    { --card3d-accent: var(--color-indigo); }
+.card3d--violet    { --card3d-accent: var(--color-violet); }
+
+.card3d__inner {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 28px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-soft);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx)) rotateY(var(--ry)) translateZ(0);
+  will-change: transform;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 18px 40px -22px rgba(15, 23, 42, 0.25),
+    0 2px 8px -2px rgba(15, 23, 42, 0.08);
+}
+
+.dark .card3d__inner {
+  background: var(--color-surface-elevated);
+  border-color: var(--color-border);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 24px 48px -24px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.card3d:hover .card3d__inner {
+  border-color: color-mix(in srgb, var(--card3d-accent) 45%, var(--color-border-soft));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 32px 60px -24px color-mix(in srgb, var(--card3d-accent) 28%, transparent),
+    0 4px 16px -4px rgba(15, 23, 42, 0.12);
+}
+
+.dark .card3d:hover .card3d__inner {
+  border-color: color-mix(in srgb, var(--card3d-accent) 55%, var(--color-border));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 32px 64px -20px color-mix(in srgb, var(--card3d-accent) 35%, transparent),
+    0 0 40px -8px var(--card3d-accent-soft);
+}
+
+/* Pointer-follow sheen — a soft light pass, not a neon glow */
+.card3d__sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    380px circle at var(--mx) var(--my),
+    color-mix(in srgb, var(--card3d-accent) 16%, transparent),
+    transparent 62%
+  );
+  mix-blend-mode: plus-lighter;
+}
+
+.dark .card3d__sheen {
+  background: radial-gradient(
+    380px circle at var(--mx) var(--my),
+    color-mix(in srgb, var(--card3d-accent) 30%, transparent),
+    transparent 65%
+  );
+}
+
+.card3d:hover .card3d__sheen {
+  opacity: 1;
+}
+
+/* Depth layers for internal parallax pop (icon chip, badge, CTA) */
+.card3d__layer {
+  transform: translateZ(var(--layer-z, 24px));
+}
+
+/* Touch / no-hover devices: static card, tap feedback only */
+@media (hover: none), (pointer: coarse) {
+  .card3d { cursor: default; }
+  .card3d__inner {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card3d:active .card3d__inner {
+    transform: scale(0.98);
+  }
+  .card3d__sheen {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card3d__inner {
+    transition: none;
+  }
+  .card3d:active .card3d__inner {
+    transform: none;
+  }
+}

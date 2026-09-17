@@ -2,9 +2,18 @@ from django.db import models
 
 
 class Biomaterial(models.Model):
+    ENTITY_TYPE_BIOMATERIAL = "biomaterial"
+    ENTITY_TYPE_DRUG = "drug"
+    ENTITY_TYPE_SMALL_MOLECULE = "small_molecule"
+    ENTITY_TYPE_CHOICES = (
+        (ENTITY_TYPE_BIOMATERIAL, "Biomaterial"),
+        (ENTITY_TYPE_DRUG, "Drug"),
+        (ENTITY_TYPE_SMALL_MOLECULE, "Small Molecule"),
+    )
     # Basic Information
     name = models.CharField(max_length=200)
     category = models.CharField(max_length=100, blank=True)
+    entity_type = models.CharField(max_length=32, choices=ENTITY_TYPE_CHOICES, null=True, blank=True)
     source = models.CharField(max_length=200, blank=True)
 
     description = models.TextField(blank=True)

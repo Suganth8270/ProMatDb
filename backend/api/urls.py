@@ -6,6 +6,7 @@ urlpatterns = [
     path("biomaterials/", include("biomaterials.urls")),
     path("interactions/", include("interactions.urls")),
 
+    path("auth/", include("api.auth_urls")),
     path("search/", views.global_search, name="global-search"),
     path("dashboard-stats/", views.dashboard_stats, name="dashboard-stats"),
 ]

@@ -1,4 +1,7 @@
-from rest_framework.decorators import api_view, parser_classes
+from rest_framework.decorators import api_view, parser_classes, permission_classes, throttle_classes
+from rest_framework.permissions import IsAuthenticated
+
+from api.throttles import BiomaterialMutationThrottle
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -14,9 +17,26 @@ from .services.pubchem import search_pubchem as search_pubchem_service
 
 import requests
 
+def _stage15c_throttle_scope(scope):
+    """Expose the approved scope to DRF ScopedRateThrottle."""
+    def decorator(view):
+        view.throttle_scope = scope
+        view.cls.throttle_scope = scope
+        return view
+    return decorator
+
 @api_view(["GET"])
+
 def biomaterial_list(request):
-    biomaterials = Biomaterial.objects.all()
+    entity_type = request.query_params.get("entity_type")
+    allowed = {
+        Biomaterial.ENTITY_TYPE_BIOMATERIAL,
+        Biomaterial.ENTITY_TYPE_DRUG,
+        Biomaterial.ENTITY_TYPE_SMALL_MOLECULE,
+    }
+    if entity_type is not None and entity_type not in allowed:
+        return Response({"error": "Invalid entity_type."}, status=400)
+    biomaterials = Biomaterial.objects.filter(entity_type=entity_type) if entity_type else Biomaterial.objects.all()
     serializer = BiomaterialSerializer(biomaterials, many=True)
     return Response(serializer.data)
 
@@ -98,7 +118,10 @@ def import_pubchem(request, cid):
         )
 
     return Response(data)
+@_stage15c_throttle_scope("biomaterial_mutation")
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
+@throttle_classes([BiomaterialMutationThrottle])
 def save_imported_pubchem(request, cid):
     """
     Fetch a biomaterial from PubChem and save it to the database.
@@ -148,7 +171,10 @@ def save_imported_pubchem(request, cid):
     )
 
 
+@_stage15c_throttle_scope("biomaterial_mutation")
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
+@throttle_classes([BiomaterialMutationThrottle])
 def manual_import_biomaterial(request):
     """
     Manually create a biomaterial from user-supplied JSON,
@@ -203,7 +229,10 @@ def manual_import_biomaterial(request):
         status=status.HTTP_201_CREATED,
     )
 
+@_stage15c_throttle_scope("biomaterial_mutation")
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
+@throttle_classes([BiomaterialMutationThrottle])
 @parser_classes([MultiPartParser, FormParser])
 def bulk_import_biomaterials(request):
     """

@@ -29,6 +29,22 @@ import { renderReact18 } from "molstar/lib/mol-plugin-ui/react18";
 import { PluginUIContext } from "molstar/lib/mol-plugin-ui/context";
 import { DefaultPluginUISpec, PluginUISpec } from "molstar/lib/mol-plugin-ui/spec";
 import { PluginConfig } from "molstar/lib/mol-plugin/config";
+import { OrderedSet } from "molstar/lib/mol-data/int";
+import { StructureElement, StructureProperties, Unit } from "molstar/lib/mol-model/structure";
+
+export interface MolViewerCoordinateReadout {
+  x: number;
+  y: number;
+  z: number;
+  units: "angstrom";
+  structureLabel: string;
+  modelIndex: number;
+  assemblyId: string;
+  atomName: string;
+  residueName: string;
+  authAsymId: string;
+  authSeqId: number;
+}
 
 export interface MolViewerProps {
   /** 4-character PDB identifier, e.g. "1AO6". */
@@ -39,6 +55,8 @@ export interface MolViewerProps {
   height?: string | number;
   /** Show the full Mol* control panel (sequence, log, controls). Defaults to false for a clean embedded viewer. */
   showControls?: boolean;
+  /** Emits only a genuine single-atom Mol* pick; never emits screen/canvas coordinates. */
+  onAtomicCoordinatePick?: (coordinate: MolViewerCoordinateReadout) => void;
 }
 
 type ViewerStatus = "idle" | "loading" | "ready" | "error";
@@ -65,11 +83,15 @@ export default function MolViewer({
   className = "",
   height = "100%",
   showControls = false,
+  onAtomicCoordinatePick,
 }: MolViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pluginRef = useRef<PluginUIContext | null>(null);
   const requestIdRef = useRef(0);
   const instanceId = useId();
+  const invalidateRequests = useCallback(() => {
+    requestIdRef.current++;
+  }, []);
 
   const [status, setStatus] = useState<ViewerStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -123,6 +145,7 @@ export default function MolViewer({
   // Initialize the plugin once on mount, tear it down on unmount.
  useEffect(() => {
   let cancelled = false;
+  let clickSubscription: { unsubscribe: () => void } | undefined;
 
   async function init() {
     if (!containerRef.current) return;
@@ -150,6 +173,39 @@ export default function MolViewer({
 
         pluginRef.current = plugin;
 
+        // Read only a genuine atomic structure-space location. Do not use
+        // event.position or any mouse/canvas/screen coordinate conversion.
+        clickSubscription = plugin.behaviors.interaction.click.subscribe((event) => {
+          if (!onAtomicCoordinatePick) return;
+          const loci = event.current?.loci;
+          if (!loci || !StructureElement.Loci.is(loci)) return;
+          if (loci.elements.length !== 1) return;
+          const unitLoci = loci.elements[0];
+          if (OrderedSet.size(unitLoci.indices) !== 1 || !Unit.isAtomic(unitLoci.unit)) return;
+
+          const unitIndex = OrderedSet.getAt(unitLoci.indices, 0);
+          const element = unitLoci.unit.elements[unitIndex];
+          const location = StructureElement.Location.create(loci.structure, unitLoci.unit, element);
+          const x = StructureProperties.atom.x(location);
+          const y = StructureProperties.atom.y(location);
+          const z = StructureProperties.atom.z(location);
+          if (![x, y, z].every(Number.isFinite)) return;
+
+          onAtomicCoordinatePick({
+            x,
+            y,
+            z,
+            units: "angstrom",
+            structureLabel: loci.structure.label,
+            modelIndex: StructureProperties.unit.model_index(location),
+            assemblyId: StructureProperties.unit.pdbx_struct_assembly_id(location),
+            atomName: StructureProperties.atom.auth_atom_id(location),
+            residueName: StructureProperties.atom.auth_comp_id(location),
+            authAsymId: StructureProperties.chain.auth_asym_id(location),
+            authSeqId: StructureProperties.residue.auth_seq_id(location),
+          });
+        });
+
         if (pdbId) {
           await loadStructure(plugin, pdbId);
         } else {
@@ -168,7 +224,9 @@ export default function MolViewer({
 
     return () => {
       cancelled = true;
-      requestIdRef.current++; // invalidate any in-flight load
+      invalidateRequests(); // invalidate any in-flight load
+      clickSubscription?.unsubscribe();
+      clickSubscription = undefined;
       pluginRef.current?.dispose();
       pluginRef.current = null;
     };
@@ -177,7 +235,7 @@ export default function MolViewer({
     // full re-init, since disposing/recreating the WebGL context on every
     // prop change is expensive and causes visible flicker.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [invalidateRequests]);
 
   // React to pdbId changes on an already-initialized plugin.
   useEffect(() => {
@@ -185,10 +243,12 @@ export default function MolViewer({
     if (!plugin) return;
 
     if (!pdbId) {
-      requestIdRef.current++;
-      plugin.clear();
-      setStatus("idle");
-      setErrorMessage(null);
+      const myRequestId = ++requestIdRef.current;
+      void plugin.clear().then(() => {
+        if (myRequestId !== requestIdRef.current) return;
+        setStatus("idle");
+        setErrorMessage(null);
+      });
       return;
     }
 
@@ -202,31 +262,71 @@ export default function MolViewer({
     }
   }, [pdbId, loadStructure]);
 
+  const molstarThemeCss = `
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin {
+      color: var(--color-text) !important;
+      background-color: var(--color-surface) !important;
+    }
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-layout,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-layout-left,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-layout-right,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-viewport,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-sequence,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-sequence-wrapper-non-empty {
+      color: var(--color-text) !important;
+      background-color: var(--color-surface) !important;
+    }
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin button,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin input,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin select,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin textarea,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-form-control {
+      color: var(--color-text) !important;
+      background-color: var(--color-surface-soft) !important;
+      border-color: var(--color-border) !important;
+    }
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin a,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin label,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-control-group-header {
+      color: var(--color-text-secondary) !important;
+    }
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-background-tasks,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-hover-box-body,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-viewport-controls-panel,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-transform-wrapper,
+    .dark [data-molviewer-id="${instanceId}"] .msp-plugin .msp-transform-default-params {
+      color: var(--color-text) !important;
+      background-color: var(--color-surface-soft) !important;
+      border-color: var(--color-border) !important;
+    }
+  `;
+
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm ${className}`}
+      className={`relative w-full overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-sm ${className}`}
       style={{ height }}
       data-molviewer-id={instanceId}
     >
+      <style>{molstarThemeCss}</style>
       {/* Mol* mounts its full UI (canvas + panels) into this element. */}
       <div ref={containerRef} className="absolute inset-0" />
 
       {status === "loading" && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white/85 backdrop-blur-sm">
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[var(--color-surface)]/85 backdrop-blur-sm">
           <div
             className="h-10 w-10 animate-spin rounded-full border-4 border-teal-100 border-t-teal-600"
             role="status"
             aria-label="Loading structure"
           />
-          <p className="text-sm font-medium text-gray-600">
+          <p className="text-sm font-medium text-[var(--color-text-secondary)]">
             Loading structure{pdbId ? ` ${pdbId.toUpperCase()}` : ""}…
           </p>
         </div>
       )}
 
       {status === "error" && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white p-6 text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-100 text-red-600">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[var(--color-surface)] p-6 text-center">
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-500/15 text-red-400">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -243,8 +343,8 @@ export default function MolViewer({
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
           </div>
-          <p className="text-sm font-semibold text-gray-800">Unable to load structure</p>
-          <p className="max-w-sm text-sm text-gray-500">{errorMessage}</p>
+          <p className="text-sm font-semibold text-[var(--color-text)]">Unable to load structure</p>
+          <p className="max-w-sm text-sm text-[var(--color-text-secondary)]">{errorMessage}</p>
           {pdbId && (
             <button
               type="button"
@@ -258,7 +358,7 @@ export default function MolViewer({
       )}
 
       {status === "idle" && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-white text-gray-300">
+        <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[var(--color-surface)] text-[var(--color-text-muted)]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -273,7 +373,7 @@ export default function MolViewer({
             <circle cx="12" cy="12" r="9" />
             <path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18M3 12h18" />
           </svg>
-          <p className="text-sm font-medium text-gray-400">No structure loaded</p>
+          <p className="text-sm font-medium text-[var(--color-text-muted)]">No structure loaded</p>
         </div>
       )}
     </div>

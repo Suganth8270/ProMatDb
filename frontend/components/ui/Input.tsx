@@ -24,8 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-interface SearchInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {}
+type SearchInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type">;
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   ({ className = "", ...props }, ref) => {

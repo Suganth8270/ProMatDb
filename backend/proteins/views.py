@@ -1,5 +1,8 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
+from rest_framework.permissions import IsAuthenticated
+
+from api.throttles import ProteinMutationThrottle
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.settings import api_settings
 import requests
@@ -8,7 +11,16 @@ from .models import Protein
 from api.serializers import ProteinSerializer
 
 
+def _stage15c_throttle_scope(scope):
+    """Expose the approved scope to DRF ScopedRateThrottle."""
+    def decorator(view):
+        view.throttle_scope = scope
+        view.cls.throttle_scope = scope
+        return view
+    return decorator
+
 @api_view(["GET"])
+
 def protein_list(request):
     search = request.GET.get("search")
 
@@ -88,7 +100,10 @@ def fetch_uniprot(request, uniprot_id):
     })
 
 
+@_stage15c_throttle_scope("protein_mutation")
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
+@throttle_classes([ProteinMutationThrottle])
 def import_uniprot(request, uniprot_id):
     url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.json"
 
@@ -217,7 +232,10 @@ def fetch_pdb(request, pdb_id):
         "resolution": resolution,
         "deposition_date": deposition_date,
     })
+@_stage15c_throttle_scope("protein_mutation")
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
+@throttle_classes([ProteinMutationThrottle])
 def link_pdb(request):
     uniprot_id = request.data.get("uniprot_id")
     pdb_id = request.data.get("pdb_id")
@@ -244,7 +262,10 @@ def link_pdb(request):
         "protein": ProteinSerializer(protein).data,
     })
 
+@_stage15c_throttle_scope("protein_mutation")
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
+@throttle_classes([ProteinMutationThrottle])
 def import_fasta(request):
     header = request.data.get("header", "").strip()
     sequence = request.data.get("sequence", "").strip()

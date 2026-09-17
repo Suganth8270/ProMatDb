@@ -3,6 +3,7 @@ export interface Biomaterial {
 
   name: string;
   category: string;
+  entity_type: "biomaterial" | "drug" | "small_molecule" | null;
   source: string;
 
   description: string;

@@ -15,23 +15,23 @@ export default function InteractionsPage() {
   return (
     <div className="w-full">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">
+        <h1 className="text-3xl font-bold text-[var(--color-text)]">
           Interaction Explorer
         </h1>
 
-        <p className="mt-2 text-slate-500">
+        <p className="mt-2 text-[var(--color-text-secondary)]">
           Browse protein–biomaterial interactions stored in the ProMatDB database.
         </p>
       </div>
 
       {loading && (
-        <p className="text-slate-500">
+        <p className="text-[var(--color-text-secondary)]">
           Loading interactions...
         </p>
       )}
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-600">
+        <div className="rounded-xl border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 p-4 text-[var(--color-danger)]">
           {error}
         </div>
       )}

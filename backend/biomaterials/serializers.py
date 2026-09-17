@@ -9,6 +9,7 @@ class BiomaterialSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "category",
+            "entity_type",
             "source",
             "description",
             "applications",

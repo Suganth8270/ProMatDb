@@ -8,29 +8,30 @@ import Button from "@/components/common/Button";
 import { useFetch } from "@/hooks/useFetch";
 import { getBiomaterials } from "@/services/api";
 import { Biomaterial } from "@/types/biomaterial";
+import BiomaterialBulkImport from "@/components/biomaterial/BiomaterialBulkImport";
 
 function BiomaterialCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="animate-pulse rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-sm">
       <div className="mb-6 flex items-start justify-between gap-3">
         <div className="flex min-w-0 gap-4">
-          <div className="h-12 w-12 shrink-0 rounded-2xl bg-slate-200" />
+          <div className="h-12 w-12 shrink-0 rounded-2xl bg-[var(--color-surface-soft)]" />
           <div className="min-w-0 space-y-2">
-            <div className="h-5 w-36 rounded bg-slate-200" />
-            <div className="h-3 w-24 rounded bg-slate-100" />
+            <div className="h-5 w-36 rounded bg-[var(--color-surface-soft)]" />
+            <div className="h-3 w-24 rounded bg-[var(--color-border-soft)]" />
           </div>
         </div>
-        <div className="h-6 w-16 rounded-full bg-slate-100" />
+        <div className="h-6 w-16 rounded-full bg-[var(--color-border-soft)]" />
       </div>
 
       <div className="space-y-3">
-        <div className="h-11 rounded-xl bg-slate-50" />
-        <div className="h-11 rounded-xl bg-slate-50" />
-        <div className="h-11 rounded-xl bg-slate-50" />
+        <div className="h-11 rounded-xl bg-[var(--color-surface-soft)]" />
+        <div className="h-11 rounded-xl bg-[var(--color-surface-soft)]" />
+        <div className="h-11 rounded-xl bg-[var(--color-surface-soft)]" />
       </div>
 
-      <div className="mt-6 h-24 rounded-2xl bg-slate-50" />
-      <div className="mt-6 h-11 rounded-xl bg-slate-100" />
+      <div className="mt-6 h-24 rounded-2xl bg-[var(--color-surface-soft)]" />
+      <div className="mt-6 h-11 rounded-xl bg-[var(--color-border-soft)]" />
     </div>
   );
 }
@@ -65,11 +66,11 @@ export default function BiomaterialsPage() {
 
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+              <h1 className="text-3xl font-bold tracking-tight text-[var(--color-text)]">
                 Biomaterial Explorer
               </h1>
 
-              <p className="mt-2 text-slate-500">
+              <p className="mt-2 text-[var(--color-text-secondary)]">
                 Browse biomaterials stored in the ProMatDB database.
                 </p>
             </div>
@@ -90,8 +91,12 @@ export default function BiomaterialsPage() {
   />
 </div>
 
+<div className="mt-6">
+  <BiomaterialBulkImport />
+</div>
+
           {!loading && !error && biomaterials && (
-            <p className="mt-3 text-sm text-slate-400">
+            <p className="mt-3 text-sm text-[var(--color-text-muted)]">
               Showing {filteredBiomaterials.length} of {biomaterials.length}{" "}
               {biomaterials.length === 1 ? "biomaterial" : "biomaterials"}
               {search && ` matching "${search}"`}
@@ -109,24 +114,24 @@ export default function BiomaterialsPage() {
         )}
 
         {error && (
-          <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-5 text-red-700">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
+          <div className="flex items-start gap-3 rounded-2xl border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 p-5 text-[var(--color-danger)]">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-danger)]" />
             <div>
               <p className="font-semibold">Couldn&apos;t load biomaterials</p>
-              <p className="mt-1 text-sm text-red-600">{error}</p>
+              <p className="mt-1 text-sm text-[var(--color-danger)]">{error}</p>
             </div>
           </div>
         )}
 
         {!loading && !error && biomaterials && filteredBiomaterials.length === 0 && (
-          <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-white/50 px-6 py-20 text-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
-              <SearchX className="h-7 w-7 text-slate-400" />
+          <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)]/50 px-6 py-20 text-center">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-surface-soft)]">
+              <SearchX className="h-7 w-7 text-[var(--color-text-muted)]" />
             </div>
-            <p className="text-lg font-semibold text-slate-900">
+            <p className="text-lg font-semibold text-[var(--color-text)]">
               No biomaterials found
             </p>
-            <p className="mt-1 max-w-sm text-sm text-slate-500">
+            <p className="mt-1 max-w-sm text-sm text-[var(--color-text-secondary)]">
               {search
                 ? `No biomaterials match "${search}". Try a different name, chemical type, category, or source.`
                 : "There are no biomaterials in the database yet."}

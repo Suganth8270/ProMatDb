@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +23,41 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)xmwg%yv6d1qs&-www=a!&gyep2ee47p%m+vj$tc=v55ra1&l&'
+# Production requires DJANGO_SECRET_KEY; the development fallback is intentionally
+# non-production and is never used when DJANGO_ENV=production.
+_ENVIRONMENT = os.environ.get("DJANGO_ENV", "development").strip().lower()
+_PRODUCTION = _ENVIRONMENT == "production"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+def _env_bool(name, default):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    normalized = value.strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    raise ImproperlyConfigured(f"{name} must be a boolean")
 
+
+def _env_list(name, default=()):
+    raw = os.environ.get(name)
+    if raw is None:
+        return list(default)
+    return [item.strip() for item in raw.split(",") if item.strip()]
+
+
+DEBUG = _env_bool("DJANGO_DEBUG", default=not _PRODUCTION)
+_SECRET_KEY_FROM_ENV = os.environ.get("DJANGO_SECRET_KEY")
+if not _SECRET_KEY_FROM_ENV and not DEBUG:
+    raise ImproperlyConfigured("DJANGO_SECRET_KEY is required when DEBUG=False")
+SECRET_KEY = _SECRET_KEY_FROM_ENV or "dev-only-insecure-key-not-for-production"
+
+_DEFAULT_DEV_HOSTS = ("localhost", "127.0.0.1", "[::1]")
+ALLOWED_HOSTS = _env_list("DJANGO_ALLOWED_HOSTS", _DEFAULT_DEV_HOSTS if DEBUG else ())
+if not DEBUG and (not ALLOWED_HOSTS or "*" in ALLOWED_HOSTS):
+    raise ImproperlyConfigured("DJANGO_ALLOWED_HOSTS must be a non-empty explicit list when DEBUG=False")
 
 # Application definition
 
@@ -53,7 +84,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -131,9 +161,42 @@ STATIC_URL = 'static/'
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+    ),
+    "DEFAULT_THROTTLE_CLASSES": (
+        "rest_framework.throttling.ScopedRateThrottle",
+    ),
+    "DEFAULT_THROTTLE_RATES": {
+        "docking_submit": "3/hour",
+        "docking_status": "120/minute",
+        "worker_health": "30/minute",
+        "artifact_read": "60/minute",
+        "biomaterial_mutation": "20/hour",
+        "protein_mutation": "20/hour",
+    },
 }
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
-
+_DEFAULT_DEV_ORIGINS = ("http://localhost:3000",)
+CORS_ALLOWED_ORIGINS = _env_list("DJANGO_CORS_ALLOWED_ORIGINS", _DEFAULT_DEV_ORIGINS if DEBUG else ())
+CSRF_TRUSTED_ORIGINS = _env_list(
+    "DJANGO_CSRF_TRUSTED_ORIGINS",
+    ("http://localhost:3000", "http://127.0.0.1:3000") if DEBUG else (),
+)
+if not DEBUG and not CORS_ALLOWED_ORIGINS:
+    raise ImproperlyConfigured("DJANGO_CORS_ALLOWED_ORIGINS is required when DEBUG=False")
+if not DEBUG and not CSRF_TRUSTED_ORIGINS:
+    raise ImproperlyConfigured("DJANGO_CSRF_TRUSTED_ORIGINS is required when DEBUG=False")
 CORS_ALLOW_CREDENTIALS = True
+
+# HTTPS and proxy settings are explicit and deployment-controlled.
+SESSION_COOKIE_SECURE = _env_bool("DJANGO_SESSION_COOKIE_SECURE", default=not DEBUG)
+CSRF_COOKIE_SECURE = _env_bool("DJANGO_CSRF_COOKIE_SECURE", default=not DEBUG)
+SECURE_SSL_REDIRECT = _env_bool("DJANGO_SECURE_SSL_REDIRECT", default=False)
+SECURE_HSTS_SECONDS = int(os.environ.get("DJANGO_SECURE_HSTS_SECONDS", "0"))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = _env_bool("DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False)
+SECURE_HSTS_PRELOAD = _env_bool("DJANGO_SECURE_HSTS_PRELOAD", default=False)
+SECURE_PROXY_SSL_HEADER = (
+    ("HTTP_X_FORWARDED_PROTO", "https")
+    if _env_bool("DJANGO_TRUST_PROXY_SSL", default=False)
+    else None
+)

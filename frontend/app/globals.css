@@ -3,33 +3,92 @@
 /* ============================================================
    ProMatDB Design Tokens
    Palette, radius and shadow scale used consistently across
-   the app. Components still use Tailwind arbitrary-value
-   classes (e.g. bg-[#1E3A8A]) to match the existing codebase
-   convention — these tokens are the single source of truth
-   those values are drawn from.
+   the app. Components consume these via Tailwind arbitrary-value
+   classes bound to the CSS variables (e.g. bg-[var(--color-primary)])
+   rather than raw hex, so every surface stays theme-aware and
+   switches automatically between :root (light) and .dark.
    ============================================================ */
 :root {
+  /* ============================================================
+     ProMatDB — Light Theme
+     Scientific Teal / Cyan / Navy
+     ============================================================ */
+
   /* Brand */
-  --color-primary: #1E3A8A;
-  --color-accent: #2563EB;
-  --color-accent-hover: #1D4ED8;
+  --color-primary: #0F766E;
+  --color-primary-hover: #115E59;
+  --color-primary-light: #14B8A6;
+
+  /* Secondary */
+  --color-secondary: #0891B2;
+  --color-secondary-light: #22D3EE;
+
+  /* Supporting accents */
+  --color-indigo: #4F46E5;
+  --color-violet: #7C3AED;
+  --color-emerald: #059669;
 
   /* Surfaces */
   --color-background: #F8FAFC;
   --color-surface: #FFFFFF;
+  --color-surface-soft: #F1F5F9;
+  --color-surface-elevated: #FFFFFF;
 
   /* Text */
   --color-text: #0F172A;
-  --color-text-secondary: #64748B;
+  --color-text-secondary: #475569;
   --color-text-muted: #94A3B8;
 
   /* Structure */
   --color-border: #CBD5E1;
+  --color-border-soft: #E2E8F0;
 
   /* Status */
-  --color-success: #16A34A;
-  --color-warning: #EA580C;
-  --color-danger: #DC2626;
+  --color-success: #059669;
+  --color-warning: #D97706;
+  --color-danger: #E11D48;
+
+  /* Effects */
+  --color-glow: rgba(20, 184, 166, 0.18);
+
+  /* Tailwind theme bridge */
+  --background: var(--color-background);
+  --foreground: var(--color-text);
+}
+
+/* ============================================================
+   ProMatDB — Dark Theme
+   ============================================================ */
+
+.dark {
+  --color-primary: #14B8A6;
+  --color-primary-hover: #2DD4BF;
+  --color-primary-light: #5EEAD4;
+
+  --color-secondary: #22D3EE;
+  --color-secondary-light: #67E8F9;
+
+  --color-indigo: #818CF8;
+  --color-violet: #A78BFA;
+  --color-emerald: #34D399;
+
+  --color-background: #07111F;
+  --color-surface: #0F1B2D;
+  --color-surface-soft: #162235;
+  --color-surface-elevated: #132238;
+
+  --color-text: #F1F5F9;
+  --color-text-secondary: #CBD5E1;
+  --color-text-muted: #94A3B8;
+
+  --color-border: #243447;
+  --color-border-soft: #1E3045;
+
+  --color-success: #34D399;
+  --color-warning: #FBBF24;
+  --color-danger: #FB7185;
+
+  --color-glow: rgba(20, 184, 166, 0.22);
 
   --background: var(--color-background);
   --foreground: var(--color-text);
@@ -64,14 +123,14 @@ body {
 }
 
 ::selection {
-  background: var(--color-accent);
+  background: var(--color-primary);
   color: #ffffff;
 }
 
 /* Consistent, visible keyboard focus across every interactive
    element in the app. */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-primary-light);
   outline-offset: 2px;
   border-radius: 4px;
 }

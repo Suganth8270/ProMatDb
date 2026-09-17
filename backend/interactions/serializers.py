@@ -8,13 +8,13 @@ from biomaterials.models import Biomaterial
 class ProteinMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = Protein
-        fields = ["id", "protein_name", "uniprot_id"]
+        fields = ["id", "protein_name", "uniprot_id", "pdb_id"]
 
 
 class BiomaterialMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = Biomaterial
-        fields = ["id", "name", "category"]
+        fields = ["id", "name", "category", "entity_type"]
 
 
 class InteractionSerializer(serializers.ModelSerializer):
