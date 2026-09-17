@@ -14,7 +14,7 @@ function LoginPageContent() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) router.replace("/");
+    if (!loading && user) router.replace("/workspace");
   }, [loading, user, router]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -24,7 +24,7 @@ function LoginPageContent() {
     try {
       await login(username, password);
       const next = searchParams.get("next");
-      router.replace(next?.startsWith("/") ? next : "/");
+      router.replace(next?.startsWith("/") ? next : "/workspace");
     } catch (exception) {
       setError(exception instanceof Error ? exception.message : "Login failed.");
     } finally {
