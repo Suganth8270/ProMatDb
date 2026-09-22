@@ -2,154 +2,100 @@
 
 import { CSSProperties, useEffect, useRef } from "react";
 
-const particles = [
-  [8, 27, 2, 0],
-  [17, 12, 3, 1.8],
-  [24, 72, 2, 3.3],
-  [33, 20, 1, 4.1],
-  [42, 78, 3, 2.4],
-  [53, 13, 2, 5.2],
-  [62, 65, 1, 1.1],
-  [72, 26, 2, 3.7],
-  [84, 58, 3, 0.8],
-  [91, 34, 1, 4.7],
-  [76, 82, 2, 2.8],
-  [14, 54, 1, 5.8],
-] as const;
+const helixes = [
+  ["h1", "-18%", "18%", "-22deg", "1.1"],
+  ["h2", "13%", "3%", "28deg", "0.92"],
+  ["h3", "42%", "27%", "-35deg", "1"],
+  ["h4", "63%", "4%", "22deg", "0.84"],
+  ["h5", "39%", "57%", "-17deg", "0.9"],
+  ["h6", "-1%", "69%", "37deg", "0.76"],
+];
 
-const nodes = Array.from({ length: 18 }, (_, index) => index);
+const pores = Array.from({ length: 22 }, (_, index) => index);
+const particles = Array.from({ length: 14 }, (_, index) => index);
+const bonds = Array.from({ length: 6 }, (_, index) => index);
+const atoms = Array.from({ length: 26 }, (_, index) => index);
+const surfacePores = Array.from({ length: 28 }, (_, index) => index);
 
-function styleWithVars(values: Record<string, string | number>): CSSProperties {
-  return values as CSSProperties;
-}
-
-export default function MolecularScene() {
+export default function MolecularScene({ compact = false }: { compact?: boolean }) {
   const sceneRef = useRef<HTMLDivElement>(null);
-  const frameRef = useRef<number | null>(null);
-  const pointerRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
-
-    const handlePointerMove = (event: PointerEvent) => {
-      const bounds = scene.getBoundingClientRect();
-      pointerRef.current = {
-        x: (event.clientX - (bounds.left + bounds.width / 2)) / bounds.width,
-        y: (event.clientY - (bounds.top + bounds.height / 2)) / bounds.height,
-      };
-
-      if (frameRef.current === null) {
-        frameRef.current = window.requestAnimationFrame(() => {
-          const { x, y } = pointerRef.current;
-          scene.style.setProperty("--pointer-x", `${x * 16}px`);
-          scene.style.setProperty("--pointer-y", `${y * 12}px`);
-          frameRef.current = null;
+    let frame = 0;
+    const handleMove = (event: PointerEvent) => {
+      const rect = scene.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      if (!frame) {
+        frame = requestAnimationFrame(() => {
+          scene.style.setProperty("--scene-x", `${x * 5}deg`);
+          scene.style.setProperty("--scene-y", `${y * -4}deg`);
+          scene.style.setProperty("--light-x", `${50 + x * 18}%`);
+          scene.style.setProperty("--light-y", `${34 + y * 12}%`);
+          frame = 0;
         });
       }
     };
-
-    const resetPointer = () => {
-      scene.style.setProperty("--pointer-x", "0px");
-      scene.style.setProperty("--pointer-y", "0px");
+    const reset = () => {
+      scene.style.setProperty("--scene-x", "0deg");
+      scene.style.setProperty("--scene-y", "0deg");
+      scene.style.setProperty("--light-x", "50%");
+      scene.style.setProperty("--light-y", "34%");
     };
-
-    scene.addEventListener("pointermove", handlePointerMove, { passive: true });
-    scene.addEventListener("pointerleave", resetPointer);
+    scene.addEventListener("pointermove", handleMove, { passive: true });
+    scene.addEventListener("pointerleave", reset);
     return () => {
-      scene.removeEventListener("pointermove", handlePointerMove);
-      scene.removeEventListener("pointerleave", resetPointer);
-      if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
+      scene.removeEventListener("pointermove", handleMove);
+      scene.removeEventListener("pointerleave", reset);
+      if (frame) cancelAnimationFrame(frame);
     };
   }, []);
 
+  if (compact) {
+    return (
+      <div ref={sceneRef} className="molecular-scene-new is-compact" role="img" aria-label="Conceptual 3D visualization of a protein interacting with a porous biomaterial scaffold">
+        <div className="scene-light-cone" /><div className="scene-haze" />
+        <div className="scene-world">
+          <div className="scene-orbit-new orbit-a" /><div className="scene-orbit-new orbit-b" /><div className="scene-orbit-new orbit-c" />
+          <div className="protein-model"><div className="protein-core-new" />{helixes.map(([name, left, top, rotate, scale]) => <span key={name} className={`protein-helix ${name}`} style={{ "--left": left, "--top": top, "--rotate": rotate, "--scale": scale } as CSSProperties}><i /><i /><i /><i /><i /><i /></span>)}<div className="protein-sphere sphere-one" /><div className="protein-sphere sphere-two" /><div className="protein-sphere sphere-three" /></div>
+          <div className="interaction-zone"><div className="binding-aura" />{bonds.map((bond) => <span key={bond} className="binding-point" />)}<i>+</i><b>binding interface</b></div>
+          <div className="scaffold-model"><div className="scaffold-front">{pores.map((p) => <span key={p} style={{ "--p": p } as CSSProperties} />)}</div><div className="scaffold-side" /><div className="scaffold-glow" /></div>
+          <div className="scene-pedestal"><div className="pedestal-face"><b>ProMatDB</b><small>MOLECULAR INTERFACE · LIVE VIEW</small></div><div className="pedestal-edge" /></div>
+          {particles.map((p) => <span className="scene-particle-new" key={p} style={{ "--particle": p } as CSSProperties} />)}
+        </div>
+        <div className="scene-coordinate-new"><span>Y</span><i /><span>Z</span></div><div className="scene-status"><span className="status-pulse" /> INTERACTION FIELD · ACTIVE</div>
+      </div>
+    );
+  }
+
   return (
-    <div
-      ref={sceneRef}
-      id="interface"
-      className="molecular-scene"
-      role="img"
-      aria-label="Conceptual layered visualization of a protein interacting with a biomaterial surface"
-    >
-      <div className="scene-ambient scene-ambient-one" />
-      <div className="scene-ambient scene-ambient-two" />
-      <div className="scene-grid" aria-hidden="true" />
-
-      <div className="scene-particles" aria-hidden="true">
-        {particles.map(([left, top, size, delay], index) => (
-          <span
-            key={index}
-            className="scene-particle"
-            style={styleWithVars({
-              "--particle-left": `${left}%`,
-              "--particle-top": `${top}%`,
-              "--particle-size": `${size}px`,
-              "--particle-delay": `${delay}s`,
-            })}
-          />
-        ))}
-      </div>
-
-      <div className="scene-depth-label scene-label-protein">
-        <span className="scene-label-line" />
-        <span>Protein</span>
-        <small>surface recognition</small>
-      </div>
-      <div className="scene-depth-label scene-label-interface">
-        <span className="scene-label-line" />
-        <span>Interaction</span>
-        <small>molecular interface</small>
-      </div>
-      <div className="scene-depth-label scene-label-material">
-        <span className="scene-label-line" />
-        <span>Biomaterial</span>
-        <small>conceptual substrate</small>
-      </div>
-
-      <div className="scene-orbit orbit-one" aria-hidden="true" />
-      <div className="scene-orbit orbit-two" aria-hidden="true" />
-      <div className="scene-orbit orbit-three" aria-hidden="true" />
-
-      <div className="protein-system" aria-hidden="true">
-        <div className="protein-shadow" />
-        <div className="protein-core">
-          <div className="protein-ribbon ribbon-one" />
-          <div className="protein-ribbon ribbon-two" />
-          <div className="protein-ribbon ribbon-three" />
-          <div className="protein-nucleus" />
-          {nodes.map((node) => (
-            <span
-              key={node}
-              className="protein-node"
-              style={styleWithVars({ "--node-index": node })}
-            />
-          ))}
+    <div ref={sceneRef} className="molecular-scene-new hero-prototype" role="img" aria-label="Cinematic scientific prototype showing a protein approaching, orienting, and binding to a porous biomaterial surface">
+      <div className="hero-prototype-light" />
+      <div className="hero-prototype-depth" />
+      <div className="hero-prototype-world">
+        <div className="hero-trajectory trajectory-one" /><div className="hero-trajectory trajectory-two" />
+        <div className="hero-protein">
+          <div className="hero-protein-shell" />
+          <div className="hero-protein-core" />
+          <div className="hero-protein-domain domain-one" /><div className="hero-protein-domain domain-two" /><div className="hero-protein-domain domain-three" />
+          {helixes.map(([name, left, top, rotate, scale]) => <span key={name} className={`hero-helix ${name}`} style={{ "--left": left, "--top": top, "--rotate": rotate, "--scale": scale } as CSSProperties}><i /><i /><i /><i /><i /><i /><i /></span>)}
+          {atoms.map((atom) => <span key={atom} className="hero-atom" style={{ "--atom": atom } as CSSProperties} />)}
         </div>
-        <div className="binding-points">
-          <span />
-          <span />
-          <span />
-          <span />
+        <div className="hero-approach-vector"><span /><b>APPROACH</b></div>
+        <div className="hero-binding-field"><div className="field-ring ring-one" /><div className="field-ring ring-two" /><div className="field-core" />{bonds.map((bond) => <span key={bond} className="hero-bond" style={{ "--bond": bond } as CSSProperties} />)}<b>INTERACTION</b></div>
+        <div className="hero-material">
+          <div className="material-top">
+            {surfacePores.map((pore) => <span key={pore} style={{ "--pore": pore } as CSSProperties} />)}
+            <div className="material-rim" />
+          </div>
+          <div className="material-side" /><div className="material-shadow" />
         </div>
+        {particles.map((particle) => <span key={particle} className="hero-signal" style={{ "--signal": particle } as CSSProperties} />)}
       </div>
-
-      <div className="material-surface" aria-hidden="true">
-        <div className="material-plane" />
-        <div className="material-lines material-lines-one" />
-        <div className="material-lines material-lines-two" />
-        <div className="material-surface-caption">
-          <span className="caption-rule" />
-          <span>STRUCTURE  /  03D</span>
-        </div>
-      </div>
-
-      <div className="scene-coordinate" aria-hidden="true">
-        <span>z</span>
-        <i />
-        <span>x</span>
-      </div>
-      <div className="scene-index" aria-hidden="true">PMD / 001</div>
+      <div className="hero-prototype-readout"><span><i /> LIVE PROTOTYPE</span><b>FIELD 03</b></div>
+      <div className="hero-prototype-axis"><span>Y</span><i /><span>Z</span></div>
     </div>
   );
 }
-

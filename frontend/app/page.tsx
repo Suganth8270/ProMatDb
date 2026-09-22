@@ -1,12 +1,5 @@
-import LandingHero from "@/components/landing/LandingHero";
-import LandingNavbar from "@/components/landing/LandingNavbar";
+import LandingPage from "@/components/landing/LandingPage";
 
-export default function PublicLandingPage() {
-  return (
-    <div className="landing-shell">
-      <LandingNavbar />
-      <LandingHero />
-    </div>
-  );
+export default function HomePage() {
+  return <LandingPage />;
 }
-
