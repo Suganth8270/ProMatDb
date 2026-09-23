@@ -16,8 +16,9 @@ const particles = Array.from({ length: 14 }, (_, index) => index);
 const bonds = Array.from({ length: 6 }, (_, index) => index);
 const atoms = Array.from({ length: 26 }, (_, index) => index);
 const surfacePores = Array.from({ length: 28 }, (_, index) => index);
+type MolecularFocus = "neutral" | "protein" | "material" | "binding";
 
-export default function MolecularScene({ compact = false }: { compact?: boolean }) {
+export default function MolecularScene({ compact = false, focus = "neutral" }: { compact?: boolean; focus?: MolecularFocus }) {
   const sceneRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,14 +56,13 @@ export default function MolecularScene({ compact = false }: { compact?: boolean 
 
   if (compact) {
     return (
-      <div ref={sceneRef} className="molecular-scene-new is-compact" role="img" aria-label="Conceptual 3D visualization of a protein interacting with a porous biomaterial scaffold">
+      <div ref={sceneRef} className={`molecular-scene-new is-compact ${focus !== "neutral" ? `is-focus-${focus}` : ""}`} role="img" aria-label="Conceptual 3D visualization of a protein interacting with a porous biomaterial scaffold">
         <div className="scene-light-cone" /><div className="scene-haze" />
         <div className="scene-world">
           <div className="scene-orbit-new orbit-a" /><div className="scene-orbit-new orbit-b" /><div className="scene-orbit-new orbit-c" />
           <div className="protein-model"><div className="protein-core-new" />{helixes.map(([name, left, top, rotate, scale]) => <span key={name} className={`protein-helix ${name}`} style={{ "--left": left, "--top": top, "--rotate": rotate, "--scale": scale } as CSSProperties}><i /><i /><i /><i /><i /><i /></span>)}<div className="protein-sphere sphere-one" /><div className="protein-sphere sphere-two" /><div className="protein-sphere sphere-three" /></div>
           <div className="interaction-zone"><div className="binding-aura" />{bonds.map((bond) => <span key={bond} className="binding-point" />)}<i>+</i><b>binding interface</b></div>
           <div className="scaffold-model"><div className="scaffold-front">{pores.map((p) => <span key={p} style={{ "--p": p } as CSSProperties} />)}</div><div className="scaffold-side" /><div className="scaffold-glow" /></div>
-          <div className="scene-pedestal"><div className="pedestal-face"><b>ProMatDB</b><small>MOLECULAR INTERFACE · LIVE VIEW</small></div><div className="pedestal-edge" /></div>
           {particles.map((p) => <span className="scene-particle-new" key={p} style={{ "--particle": p } as CSSProperties} />)}
         </div>
         <div className="scene-coordinate-new"><span>Y</span><i /><span>Z</span></div><div className="scene-status"><span className="status-pulse" /> INTERACTION FIELD · ACTIVE</div>

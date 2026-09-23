@@ -266,7 +266,6 @@ body {
 .scaffold-front span:nth-child(2n) { transform: rotate(-11deg) scale(.72); }
 .scaffold-front span:nth-child(3n) { transform: rotate(7deg) scale(.86); }
 .scaffold-front span:nth-child(4n) { transform: rotate(21deg) scale(.68); } .scaffold-side { position: absolute; right: -18px; bottom: -13px; width: 100%; height: 22px; background: #b3afa2; transform: skewX(-43deg) rotateX(56deg); transform-origin: bottom right; }
-.scene-pedestal { position: absolute; z-index: 2; bottom: 8%; left: 11%; width: 77%; height: 17%; transform: rotateX(60deg) rotateZ(-4deg); transform-style: preserve-3d; } .pedestal-face { display: grid; height: 100%; place-items: center; border-radius: 5px; background: linear-gradient(135deg, #2e3932, #101b18 48%, #26362c); box-shadow: 0 24px 28px rgba(26,36,28,.27), inset 0 1px 0 rgba(255,255,255,.25); transform: translateZ(18px); } .pedestal-face b { color: #e7ebde; font-family: var(--serif); font-size: 24px; font-weight: 400; letter-spacing: -.06em; } .pedestal-face small { margin-top: -24px; color: #8fba9c; font-size: 7px; letter-spacing: .23em; } .pedestal-edge { position: absolute; right: 2%; bottom: -17px; left: 2%; height: 19px; border-radius: 4px; background: #0b1512; transform: skewX(-38deg); }
 .scene-particle-new { position: absolute; z-index: 8; left: 50%; top: 45%; width: 3px; height: 3px; border-radius: 50%; background: var(--green); opacity: .45; animation: particleFloat 6s ease-in-out infinite alternate; }
 .scene-particle-new:nth-child(2n) { left: 18%; top: 27%; width: 2px; height: 2px; animation-delay: .4s; }
 .scene-particle-new:nth-child(3n) { left: 31%; top: 72%; width: 4px; height: 4px; animation-delay: .8s; }
@@ -278,8 +277,39 @@ body {
 .features-section, .sources-section { background: var(--paper); }
 .landing-section { position: relative; padding: clamp(86px, 10vw, 145px) clamp(22px, 7vw, 120px); }
 .section-intro { max-width: 660px; } .section-intro.centered { margin: 0 auto; text-align: center; } .section-intro.centered .landing-kicker { justify-content: center; } .section-intro h2, .science-showcase h2, .snapshot-section h2, .mission-section h2, .final-cta-section h2 { margin: 20px 0 16px; font-family: var(--serif); font-size: clamp(2.6rem, 4.8vw, 4.7rem); font-weight: 400; letter-spacing: -.07em; line-height: .95; } .section-intro p { max-width: 540px; color: var(--muted); font-size: 15px; line-height: 1.65; } .section-intro.centered p { margin: auto; }
-.feature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 17px; margin-top: 58px; } .feature-card { position: relative; min-height: 285px; padding: 29px 27px; border: 1px solid var(--line); border-radius: 3px; background: #fff; box-shadow: 0 8px 24px rgba(39,49,37,.045); transition: transform .25s ease, box-shadow .25s ease; } .feature-card:hover { transform: translateY(-8px); box-shadow: 0 20px 36px rgba(39,49,37,.12); } .feature-icon { display: grid; width: 43px; height: 43px; place-items: center; margin-bottom: 42px; border-radius: 13px; } .feature-icon.green { background: var(--green-soft); color: var(--green); } .feature-icon.blue { background: var(--blue-soft); color: var(--blue); } .feature-icon.lavender { background: #eee8f5; color: #7961a3; } .feature-icon.amber { background: #f5ecda; color: #b17b27; } .feature-card > small, .source-card small { color: #8a9189; font-size: 8px; font-weight: 700; letter-spacing: .16em; } .feature-card h3, .source-card h3 { margin: 10px 0 8px; font-family: var(--serif); font-size: 23px; font-weight: 400; letter-spacing: -.04em; } .feature-card p, .source-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; } .feature-arrow { position: absolute; right: 25px; bottom: 26px; color: var(--green); transition: transform .2s ease; } .feature-card:hover .feature-arrow { transform: translateX(5px); }
-.journey-section { background: #f1eee5; } .journey-line { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; margin-top: 75px; } .journey-step { position: relative; min-height: 135px; border-top: 1px solid #bfc4b8; text-align: center; } .journey-step::after { position: absolute; top: -1px; right: -50%; left: 50%; height: 1px; background: #bfc4b8; content: ""; } .journey-step:last-child::after { display: none; } .journey-node { position: relative; z-index: 2; display: grid; width: 37px; height: 37px; margin: -19px auto 17px; place-items: center; border: 1px solid #aebbb0; border-radius: 50%; background: var(--ivory); color: var(--green); font-family: var(--font-geist-mono), monospace; font-size: 10px; } .journey-step small { color: #88948a; font-size: 8px; letter-spacing: .12em; } .journey-step h3 { margin: 8px 0 5px; font-family: var(--serif); font-size: 21px; font-weight: 400; } .journey-step p { margin: 0; color: var(--muted); font-size: 10px; }
+.features-section .section-intro .landing-kicker, .features-section .section-intro h2, .features-section .section-intro p { opacity: 0; filter: blur(8px); transform: translateY(20px); } .features-section.is-visible .section-intro .landing-kicker { animation: featureTextReveal .8s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 0ms; } .features-section.is-visible .section-intro h2 { animation: featureTextReveal .8s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 100ms; } .features-section.is-visible .section-intro p { animation: featureTextReveal .8s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 220ms; } @keyframes featureTextReveal { from { opacity: 0; filter: blur(8px); transform: translateY(20px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+.feature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 17px; margin-top: 58px; } .feature-card { position: relative; isolation: isolate; overflow: hidden; min-height: 285px; padding: 29px 27px; border: 1px solid var(--line); border-radius: 3px; background: #fff; box-shadow: 0 8px 24px rgba(39,49,37,.045); transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s ease; opacity: 0; filter: blur(8px); transform: translateY(20px); } .features-section.is-visible .feature-card:nth-child(1) { animation: featureCardIn .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 300ms; } .features-section.is-visible .feature-card:nth-child(2) { animation: featureCardIn .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 420ms; } .features-section.is-visible .feature-card:nth-child(3) { animation: featureCardIn .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 540ms; } .features-section.is-visible .feature-card:nth-child(4) { animation: featureCardIn .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 660ms; } @keyframes featureCardIn { from { opacity: 0; filter: blur(8px); transform: translateY(20px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } } .feature-card::before { content: ""; position: absolute; inset: 0; z-index: 0; opacity: 0; background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(78,127,203,.12), rgba(238,232,245,.08) 45%, transparent 72%); transition: opacity .35s ease; pointer-events: none; } .feature-card > * { position: relative; z-index: 1; } .feature-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 22px 40px rgba(78,127,203,.14), 0 10px 22px rgba(23,32,29,.06); } .feature-card:hover::before { opacity: 1; } .feature-icon { display: grid; width: 43px; height: 43px; place-items: center; margin-bottom: 42px; border-radius: 13px; } .feature-icon.ivory { background: var(--cream); color: var(--ink); } .feature-icon.blue { background: var(--blue-soft); color: var(--blue); } .feature-icon.lavender { background: #eee8f5; color: #7961a3; } .feature-card > small, .source-card small { color: #8a9189; font-size: 8px; font-weight: 700; letter-spacing: .16em; } .feature-card h3, .source-card h3 { margin: 10px 0 8px; font-family: var(--serif); font-size: 23px; font-weight: 400; letter-spacing: -.04em; transition: transform .25s ease, color .25s ease; } .feature-card:hover h3 { transform: translateY(-2px); color: var(--blue); } .feature-card p, .source-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; } .feature-arrow { position: absolute; right: 25px; bottom: 26px; color: var(--muted); transition: transform .25s ease, color .25s ease; } .feature-card:hover .feature-arrow { transform: translateX(6px); color: var(--blue); }
+.scramble-heading { font-variant-ligatures: none; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (prefers-reduced-motion: reduce) { .features-section .section-intro .landing-kicker, .features-section .section-intro h2, .features-section .section-intro p, .feature-card { animation: none; opacity: 1; filter: none; transform: none; } }
+.journey-section { position: relative; z-index: 1; background: #f1eee5; padding-bottom: 300px; }
+.journey-line { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; margin-top: 75px; }
+.journey-step { position: relative; min-height: 135px; border-top: 1px solid #d9d2c1; text-align: center; }
+.journey-step::after { position: absolute; top: -1px; right: -50%; left: 50%; height: 1px; background: #d9d2c1; content: ""; }
+.journey-step:last-child::after { display: none; }
+.journey-step-trigger { display: block; width: 100%; padding: 0; margin: 0; border: 0; background: none; font: inherit; color: inherit; text-align: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.journey-step-trigger:focus-visible { outline: 2px solid var(--blue); outline-offset: 6px; border-radius: 4px; }
+.journey-node { position: relative; z-index: 2; display: grid; width: 37px; height: 37px; margin: -19px auto 17px; place-items: center; border: 1px solid #c7c0ac; border-radius: 50%; background: var(--ivory); color: #7c7666; transition: transform .3s cubic-bezier(.22,1,.36,1), background .25s ease, border-color .25s ease, color .25s ease, box-shadow .3s ease; }
+.journey-step small { display: block; color: #948d7b; font-size: 8px; letter-spacing: .12em; transition: color .25s ease; }
+.journey-step h3 { margin: 8px 0 5px; font-family: var(--serif); font-size: 21px; font-weight: 400; transition: color .25s ease; }
+.journey-step p { margin: 0; color: var(--muted); font-size: 10px; }
+.journey-step.is-active .journey-node { transform: scale(1.08); border-color: var(--blue); background: var(--blue); color: #fff; box-shadow: 0 0 0 6px rgba(78,127,203,.16); }
+.journey-step.is-active small { color: var(--blue); }
+.journey-step-trigger:hover h3, .journey-step.is-active h3 { color: var(--blue); }
+.journey-stem { position: absolute; top: 100%; left: 50%; z-index: 21; width: 1px; height: 16px; background: var(--blue); opacity: 0; transform: translateX(-50%) scaleY(0); transform-origin: top center; transition: transform .35s ease, opacity .3s ease; pointer-events: none; }
+.journey-step.is-active .journey-stem { opacity: .55; transform: translateX(-50%) scaleY(1); }
+.journey-panel { position: absolute; top: calc(100% + 15px); left: 50%; z-index: 22; width: min(262px, 84vw); padding: 24px 22px 22px; border-radius: 14px; border: 1px solid rgba(226,222,208,.14); background: var(--charcoal); box-shadow: 0 28px 52px rgba(16,26,24,.3), 0 8px 18px rgba(16,26,24,.14); text-align: left; transform-origin: 50% 0%; transform: translateX(-50%) translateY(-8px) scaleY(.06); opacity: 0; visibility: hidden; pointer-events: none; transition: transform .5s cubic-bezier(.3,1.4,.5,1), opacity .3s ease, visibility 0s linear .4s; }
+.journey-step.is-active .journey-panel { transform: translateX(-50%) translateY(0) scaleY(1); opacity: 1; visibility: visible; pointer-events: auto; transition: transform .6s cubic-bezier(.22,1.68,.38,1), opacity .35s ease, visibility 0s linear 0s; }
+.journey-panel-inner { opacity: 0; transform: translateY(6px); transition: opacity .3s ease, transform .3s ease; transition-delay: 0s; }
+.journey-step.is-active .journey-panel-inner { opacity: 1; transform: translateY(0); transition-delay: .16s; }
+.journey-panel-eyebrow { display: flex; align-items: center; gap: 7px; color: #8fb0e8; font-family: var(--font-geist-mono), monospace; font-size: 9px; font-weight: 700; letter-spacing: .14em; }
+.journey-panel h4 { margin: 12px 0 9px; color: #f7f5ee; font-family: var(--serif); font-size: 19px; font-weight: 400; letter-spacing: -.02em; }
+.journey-panel p { margin: 0; color: #c3c6bc; font-size: 12px; line-height: 1.65; }
+.journey-panel-bullets { display: grid; gap: 6px; margin: 15px 0 0; padding: 0; list-style: none; font-size: 11px; color: #d8d6cb; }
+.journey-panel-bullets li { position: relative; padding-left: 15px; }
+.journey-panel-bullets li::before { position: absolute; left: 0; color: #8fb0e8; content: "–"; }
+.journey-panel-cta { display: inline-flex; align-items: center; gap: 7px; margin-top: 17px; color: #8fb0e8; font-size: 11px; font-weight: 700; letter-spacing: .03em; transition: gap .2s ease, color .2s ease; }
+.journey-panel-cta:hover { gap: 10px; color: #aecafc; }
 .science-showcase { display: grid; grid-template-columns: .75fr 1.25fr; min-height: 660px; padding: 0 clamp(22px, 7vw, 120px); background: var(--charcoal); color: #f7f5ed; overflow: hidden; } .showcase-copy { align-self: center; max-width: 480px; padding: 70px 0; } .science-showcase h2 { font-size: clamp(3rem, 5vw, 5rem); } .showcase-copy > p { color: #b5c2b9; font-size: 15px; line-height: 1.7; } .showcase-notes { display: grid; gap: 12px; margin: 30px 0; color: #b5c2b9; font-size: 11px; } .showcase-notes span { display: flex; align-items: center; gap: 10px; } .showcase-notes svg { color: #88bda0; } .button-cream { display: inline-flex; align-items: center; gap: 10px; border-radius: 999px; background: var(--cream); color: var(--charcoal); font-size: 11px; font-weight: 700; transition: transform .2s ease; } .button-cream:hover { transform: translateY(-2px); } .showcase-visual { position: relative; min-height: 660px; } .showcase-visual .molecular-scene-new { transform: scale(1.15); } .showcase-data { position: absolute; right: 5%; bottom: 16%; z-index: 8; display: grid; gap: 10px; color: #c2d0c6; font-size: 9px; letter-spacing: .1em; } .showcase-data b { color: #7fb294; margin-right: 8px; }
 .source-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 58px; } .source-card { min-height: 230px; padding: 25px; border: 1px solid var(--line); border-top: 3px solid var(--green); background: #fff; } .source-card.blue { border-top-color: var(--blue); } .source-card.amber { border-top-color: #c99643; } .source-card.charcoal { border-top-color: #46544b; } .source-top { display: flex; justify-content: space-between; color: var(--green); } .source-card.blue .source-top { color: var(--blue); } .source-card.amber .source-top { color: #b17b27; } .source-card.charcoal .source-top { color: #46544b; } .source-card > svg { margin-top: 32px; color: #aeb8af; }
 .snapshot-section { padding: 95px clamp(22px, 7vw, 120px); background: #e5eee7; } .snapshot-inner { display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: 70px; } .snapshot-section h2 { color: var(--ink); } .snapshot-section p { max-width: 420px; color: #68766d; line-height: 1.65; } .snapshot-metrics { display: grid; grid-template-columns: repeat(2, 1fr); } .snapshot-metrics .landing-metric { min-height: 114px; padding: 17px 26px; border-color: #b6c8ba; } .snapshot-metrics .landing-metric:nth-child(2n) { border-right: 0; } .snapshot-metrics .landing-metric:nth-child(n+3) { border-top: 1px solid #b6c8ba; }
@@ -289,8 +319,8 @@ body {
 @keyframes modelFloat { 0%,100% { transform: translate3d(0,0,0) rotateZ(-1deg); } 50% { transform: translate3d(4px,-10px,0) rotateZ(2deg); } } @keyframes scaffoldFloat { 0%,100% { transform: rotateX(54deg) rotateZ(-11deg) translateY(0); } 50% { transform: rotateX(54deg) rotateZ(-9deg) translateY(-7px); } } @keyframes orbitSpin { from { transform: rotateX(68deg) rotateZ(-12deg) rotate(0); } to { transform: rotateX(68deg) rotateZ(-12deg) rotate(360deg); } } @keyframes pointPulse { 0%,100% { opacity: .35; transform: scale(.8); } 50% { opacity: 1; transform: scale(1.25); } } @keyframes particleFloat { from { transform: translate3d(0,0,0); } to { transform: translate3d(8px,-12px,0); } }
 .section-reveal { animation: revealSection .8s both; animation-timeline: view(); animation-range: entry 0% cover 25%; } @keyframes revealSection { from { opacity: .45; transform: translateY(25px); } to { opacity: 1; transform: none; } }
 @media (max-width: 1180px) { .landing-desktop-nav { gap: 16px; } .landing-header-actions { gap: 11px; } .landing-hero-new { grid-template-columns: minmax(360px,.85fr) minmax(470px,1.15fr); padding-right: 30px; padding-left: 50px; } .hero-copy-new h1 { font-size: clamp(3.2rem, 5vw, 4.6rem); } .scene-caption-material { right: -2%; } }
-@media (max-width: 900px) { .landing-header { min-height: 74px; } .landing-desktop-nav, .landing-header-actions { display: none; } .landing-menu-toggle { display: grid; place-items: center; } .landing-hero-new { display: block; min-height: auto; padding: 126px 34px 30px; } .hero-copy-new { max-width: 660px; } .hero-scene-new { min-height: 600px; margin-top: -8px; } .scene-caption-material { right: 3%; } .feature-grid, .source-grid { grid-template-columns: repeat(2, 1fr); } .journey-line { grid-template-columns: repeat(3, 1fr); row-gap: 54px; } .journey-step:nth-child(3)::after { display: none; } .science-showcase { grid-template-columns: 1fr; } .showcase-copy { max-width: 650px; } .showcase-visual { min-height: 550px; } .snapshot-inner, .mission-section { grid-template-columns: 1fr; gap: 35px; } .mission-note { max-width: 500px; } }
-@media (max-width: 620px) { .landing-wordmark small { display: none; } .landing-header { padding: 0 18px; } .landing-hero-new { padding: 112px 18px 20px; } .hero-copy-new h1 { margin-top: 18px; font-size: clamp(3rem, 14vw, 4.2rem); } .hero-lede { font-size: 14px; } .hero-actions-new { margin-top: 23px; } .hero-handnote { margin-left: 40%; font-size: 16px; } .hero-metrics { grid-template-columns: repeat(2, 1fr); margin-top: 25px; } .hero-metrics .landing-metric:nth-child(2) { border-right: 0; } .hero-metrics .landing-metric:nth-child(n+3) { border-top: 1px solid #d4d4c9; } .hero-scene-new { min-height: 430px; margin: 15px -18px 0; } .molecular-scene-new { transform: scale(.85); transform-origin: center center; } .scene-caption { transform: scale(.9); } .scene-caption-protein { top: 9%; left: 6%; } .scene-caption-material { top: 43%; right: 0; } .scene-caption-interface { top: 69%; left: 41%; } .scene-page-index, .scene-scroll { display: none; } .feature-grid, .source-grid { grid-template-columns: 1fr; } .landing-section { padding: 76px 18px; } .section-intro h2, .science-showcase h2, .snapshot-section h2, .mission-section h2, .final-cta-section h2 { font-size: 3rem; } .feature-card { min-height: 245px; } .journey-line { grid-template-columns: 1fr; margin-top: 53px; } .journey-step { min-height: 86px; padding-left: 63px; border-top: 0; border-left: 1px solid #bfc4b8; text-align: left; } .journey-step::after { display: none; } .journey-node { position: absolute; top: 0; left: -19px; margin: 0; } .journey-step small, .journey-step h3, .journey-step p { margin-left: 0; } .journey-step h3 { margin-top: 5px; } .science-showcase { padding: 0 18px; } .showcase-copy { padding: 76px 0 20px; } .showcase-visual { min-height: 430px; margin: 0 -18px; } .showcase-visual .molecular-scene-new { transform: scale(.82); } .snapshot-section { padding: 76px 18px; } .snapshot-metrics .landing-metric { padding-right: 12px; padding-left: 12px; } .mission-section { padding: 76px 18px; } .mission-note { font-size: 2.5rem; } .final-cta-section { grid-template-columns: 1fr; padding: 76px 18px; } .final-cta-mark { margin-bottom: -12px; } .landing-footer-new { grid-template-columns: repeat(2, 1fr); gap: 36px 20px; padding: 55px 18px 25px; } .footer-brand { grid-column: 1 / -1; } .footer-bottom { display: grid; gap: 10px; margin-top: 0; } }
+@media (max-width: 900px) { .landing-header { min-height: 74px; } .landing-desktop-nav, .landing-header-actions { display: none; } .landing-menu-toggle { display: grid; place-items: center; } .landing-hero-new { display: block; min-height: auto; padding: 126px 34px 30px; } .hero-copy-new { max-width: 660px; } .hero-scene-new { min-height: 600px; margin-top: -8px; } .scene-caption-material { right: 3%; } .feature-grid, .source-grid { grid-template-columns: repeat(2, 1fr); } .journey-line { grid-template-columns: repeat(3, 1fr); row-gap: 230px; } .journey-step:nth-child(3)::after { display: none; } .science-showcase { grid-template-columns: 1fr; } .showcase-copy { max-width: 650px; } .showcase-visual { min-height: 550px; } .snapshot-inner, .mission-section { grid-template-columns: 1fr; gap: 35px; } .mission-note { max-width: 500px; } }
+@media (max-width: 620px) { .landing-wordmark small { display: none; } .landing-header { padding: 0 18px; } .landing-hero-new { padding: 112px 18px 20px; } .hero-copy-new h1 { margin-top: 18px; font-size: clamp(3rem, 14vw, 4.2rem); } .hero-lede { font-size: 14px; } .hero-actions-new { margin-top: 23px; } .hero-handnote { margin-left: 40%; font-size: 16px; } .hero-metrics { grid-template-columns: repeat(2, 1fr); margin-top: 25px; } .hero-metrics .landing-metric:nth-child(2) { border-right: 0; } .hero-metrics .landing-metric:nth-child(n+3) { border-top: 1px solid #d4d4c9; } .hero-scene-new { min-height: 430px; margin: 15px -18px 0; } .molecular-scene-new { transform: scale(.85); transform-origin: center center; } .scene-caption { transform: scale(.9); } .scene-caption-protein { top: 9%; left: 6%; } .scene-caption-material { top: 43%; right: 0; } .scene-caption-interface { top: 69%; left: 41%; } .scene-page-index, .scene-scroll { display: none; } .feature-grid, .source-grid { grid-template-columns: 1fr; } .landing-section { padding: 76px 18px; } .section-intro h2, .science-showcase h2, .snapshot-section h2, .mission-section h2, .final-cta-section h2 { font-size: 3rem; } .feature-card { min-height: 245px; } .journey-section { padding-bottom: 76px; } .journey-line { grid-template-columns: 1fr; margin-top: 53px; } .journey-step { min-height: 86px; padding-left: 63px; padding-bottom: 18px; border-top: 0; border-left: 1px solid #d9d2c1; text-align: left; } .journey-step:last-child { padding-bottom: 0; } .journey-step::after { display: none; } .journey-node { position: absolute; top: 0; left: -19px; margin: 0; } .journey-step small, .journey-step h3, .journey-step p { margin-left: 0; } .journey-step h3 { margin-top: 5px; } .journey-stem { display: none; } .journey-panel { position: static; left: auto; top: auto; width: 100%; max-width: none; margin-top: 14px; padding: 0 18px; border-radius: 12px; overflow: hidden; max-height: 0; transform: none; transition: max-height .5s ease, opacity .3s ease, padding .5s ease, visibility 0s linear .4s; } .journey-step.is-active .journey-panel { max-height: 640px; padding: 19px 18px 18px; transition: max-height .55s ease, opacity .35s ease, padding .55s ease, visibility 0s linear 0s; } .science-showcase { padding: 0 18px; } .showcase-copy { padding: 76px 0 20px; } .showcase-visual { min-height: 430px; margin: 0 -18px; } .showcase-visual .molecular-scene-new { transform: scale(.82); } .snapshot-section { padding: 76px 18px; } .snapshot-metrics .landing-metric { padding-right: 12px; padding-left: 12px; } .mission-section { padding: 76px 18px; } .mission-note { font-size: 2.5rem; } .final-cta-section { grid-template-columns: 1fr; padding: 76px 18px; } .final-cta-mark { margin-bottom: -12px; } .landing-footer-new { grid-template-columns: repeat(2, 1fr); gap: 36px 20px; padding: 55px 18px 25px; } .footer-brand { grid-column: 1 / -1; } .footer-bottom { display: grid; gap: 10px; margin-top: 0; } }
 @media (prefers-reduced-motion: reduce) { .landing-page *, .landing-page *::before, .landing-page *::after { animation: none !important; animation-timeline: none !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } .scene-world { transform: none !important; } }
 
 
@@ -1434,5 +1464,785 @@ html {
 
   .science-timeline__video-frame {
     min-height: 180px;
+  }
+}
+
+
+/* Science showcase visual foundation — intentionally scoped so the Hero's
+   shared MolecularScene remains unchanged. */
+.science-showcase {
+  --science-bg: #101416;
+  --science-text: #f5f0e6;
+  --science-blue: #4f7fd9;
+  --science-blue-soft: #afc8f5;
+  --science-muted: #8995a5;
+  --science-material: #e8e2d5;
+  --science-lilac: #a59ab9;
+  position: relative;
+  isolation: isolate;
+  grid-template-columns: minmax(270px, .78fr) minmax(0, 1.22fr);
+  min-height: 700px;
+  background:
+    radial-gradient(circle at 78% 47%, rgba(79, 127, 217, .12), transparent 31%),
+    radial-gradient(circle at 91% 78%, rgba(165, 154, 185, .09), transparent 24%),
+    var(--science-bg);
+  color: var(--science-text);
+}
+
+.science-showcase::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(175, 200, 245, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(175, 200, 245, .045) 1px, transparent 1px);
+  background-size: 88px 88px;
+  mask-image: linear-gradient(90deg, transparent 0, rgba(0, 0, 0, .72) 48%, rgba(0, 0, 0, .3));
+  content: "";
+  pointer-events: none;
+}
+
+.science-showcase::after {
+  position: absolute;
+  top: 10%;
+  bottom: 10%;
+  left: 39.5%;
+  width: 1px;
+  background: linear-gradient(transparent, rgba(175, 200, 245, .18) 20%, rgba(175, 200, 245, .18) 80%, transparent);
+  content: "";
+  pointer-events: none;
+}
+
+.science-showcase .showcase-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 510px;
+  padding: 92px 0;
+}
+
+.science-showcase .landing-kicker.light {
+  color: var(--science-blue-soft);
+}
+
+.science-showcase h2 {
+  color: var(--science-text);
+  text-wrap: balance;
+}
+
+.science-showcase .showcase-copy > p,
+.science-showcase .showcase-notes {
+  color: var(--science-muted);
+}
+
+.science-showcase .showcase-copy > p {
+  max-width: 460px;
+}
+
+.science-showcase .showcase-notes svg {
+  color: var(--science-blue-soft);
+}
+
+.science-showcase .button-cream {
+  background: var(--science-material);
+  color: var(--science-bg);
+}
+
+.science-showcase .showcase-visual {
+  position: relative;
+  min-height: 700px;
+  border-left: 1px solid rgba(175, 200, 245, .08);
+  background:
+    radial-gradient(ellipse at 58% 44%, rgba(79, 127, 217, .08), transparent 38%),
+    linear-gradient(135deg, transparent 0 45%, rgba(232, 226, 213, .025) 45.2%, transparent 45.5%);
+}
+
+.science-showcase .showcase-visual::before {
+  position: absolute;
+  top: 8%;
+  right: 8%;
+  left: 8%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(175, 200, 245, .2), transparent);
+  content: "";
+}
+
+.science-showcase .showcase-visual .molecular-scene-new {
+  transform: scale(1.06);
+  transform-origin: center center;
+}
+
+.science-showcase .showcase-visual .scene-light-cone {
+  opacity: .38;
+  background: radial-gradient(ellipse at var(--light-x) var(--light-y), rgba(175, 200, 245, .42), transparent 60%);
+}
+
+.science-showcase .showcase-visual .scene-haze {
+  background: radial-gradient(ellipse, rgba(79, 127, 217, .15), rgba(165, 154, 185, .06) 42%, transparent 70%);
+}
+
+.science-showcase .showcase-visual .scene-orbit-new {
+  border-color: rgba(165, 154, 185, .34);
+  box-shadow: 0 0 22px rgba(165, 154, 185, .08);
+}
+
+.science-showcase .showcase-visual .orbit-c {
+  border-color: rgba(175, 200, 245, .32);
+}
+
+.science-showcase .showcase-visual .protein-core-new {
+  background:
+    radial-gradient(circle at 26% 20%, var(--science-blue-soft) 0, transparent 23%),
+    radial-gradient(circle at 62% 48%, var(--science-blue) 0, #294d91 66%, #1c3262 100%);
+}
+
+.science-showcase .showcase-visual .protein-helix i {
+  background: linear-gradient(90deg, var(--science-blue-soft), var(--science-blue) 63%, #d4e1fb);
+}
+
+.science-showcase .showcase-visual .interaction-zone span,
+.science-showcase .showcase-visual .binding-point {
+  background: var(--science-blue-soft);
+  box-shadow: 0 0 0 5px rgba(175, 200, 245, .12), 0 0 18px rgba(79, 127, 217, .52);
+}
+
+.science-showcase .showcase-visual .interaction-zone i,
+.science-showcase .showcase-visual .interaction-zone b {
+  color: var(--science-blue-soft);
+}
+
+.science-showcase .showcase-visual .binding-aura {
+  border-color: rgba(175, 200, 245, .54);
+  background: radial-gradient(circle, rgba(79, 127, 217, .2), transparent 67%);
+  box-shadow: 0 0 28px rgba(79, 127, 217, .2);
+}
+
+.science-showcase .showcase-visual .scaffold-front {
+  border-color: #d8d1c3;
+  background: linear-gradient(132deg, #f7f2e7, var(--science-material));
+}
+
+.science-showcase .showcase-visual .scaffold-front span {
+  background: #9b9ca2;
+  box-shadow: inset 2px 3px 4px rgba(62, 65, 76, .4);
+}
+
+.science-showcase .showcase-visual .scaffold-side {
+  background: #b8b2a8;
+}
+
+.science-showcase .showcase-visual .scaffold-glow {
+  background: rgba(165, 154, 185, .14);
+}
+
+.science-showcase .showcase-visual .surface-wave {
+  border-color: rgba(165, 154, 185, .35);
+}
+
+.science-showcase .showcase-visual .scene-particle-new {
+  background: var(--science-blue-soft);
+  box-shadow: 0 0 7px rgba(175, 200, 245, .45);
+}
+
+.science-showcase .showcase-visual .scene-coordinate-new,
+.science-showcase .showcase-visual .scene-status {
+  color: var(--science-muted);
+}
+
+.science-showcase .showcase-visual .scene-coordinate-new i {
+  background: rgba(175, 200, 245, .58);
+}
+
+.science-showcase .showcase-visual .status-pulse {
+  background: var(--science-blue);
+  box-shadow: 0 0 0 4px rgba(79, 127, 217, .15);
+}
+
+.science-showcase .showcase-data {
+  right: 7%;
+  bottom: 12%;
+  padding: 14px 16px;
+  border-left: 1px solid rgba(175, 200, 245, .28);
+  background: rgba(16, 20, 22, .66);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, .16);
+  backdrop-filter: blur(8px);
+  color: var(--science-muted);
+}
+
+.science-showcase .showcase-data span {
+  white-space: nowrap;
+}
+
+.science-showcase .showcase-data b {
+  color: var(--science-blue-soft);
+}
+
+@media (max-width: 900px) {
+  .science-showcase::after { display: none; }
+  .science-showcase .showcase-copy { max-width: 650px; padding: 82px 0 35px; }
+  .science-showcase .showcase-visual { min-height: 550px; border-left: 0; }
+}
+
+@media (max-width: 620px) {
+  .science-showcase .showcase-copy { padding: 76px 0 20px; }
+  .science-showcase .showcase-visual { min-height: 430px; }
+  .science-showcase .showcase-visual .molecular-scene-new { transform: scale(.82); }
+  .science-showcase .showcase-data { right: 5%; bottom: 9%; padding: 11px 12px; font-size: 8px; }
+}
+
+
+/* Science heading focus scan — decorative overlay only; the semantic h2 text remains unchanged. */
+.science-showcase .science-scan-heading {
+  --science-scan-x: 50%;
+  --science-scan-trail-x: 50%;
+  --science-scan-opacity: 0;
+  position: relative;
+  isolation: isolate;
+  cursor: crosshair;
+}
+
+.science-showcase .science-scan-heading::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(90deg,
+      transparent calc(var(--science-scan-x) - 7%),
+      rgba(79, 127, 217, .18) calc(var(--science-scan-x) - 2.5%),
+      rgba(175, 200, 245, .98) calc(var(--science-scan-x) - .65%),
+      #ffffff var(--science-scan-x),
+      rgba(175, 200, 245, .98) calc(var(--science-scan-x) + .65%),
+      rgba(165, 154, 185, .28) calc(var(--science-scan-x) + 3%),
+      transparent calc(var(--science-scan-x) + 7%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  content: attr(data-scan-text);
+  filter: drop-shadow(0 0 3px rgba(175, 200, 245, .34)) drop-shadow(1px 0 0 rgba(165, 154, 185, .16));
+  opacity: var(--science-scan-opacity);
+  pointer-events: none;
+  transition: opacity .28s ease;
+  white-space: pre-wrap;
+  -webkit-text-fill-color: transparent;
+}
+
+.science-showcase .science-scan-heading::before {
+  position: absolute;
+  top: -8%;
+  bottom: -8%;
+  left: calc(var(--science-scan-x) - 6%);
+  z-index: 0;
+  width: 12%;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 9px, rgba(175, 200, 245, .24) 9px 9.6px, transparent 9.6px 17px),
+    radial-gradient(ellipse at calc(var(--science-scan-trail-x) - var(--science-scan-x) + 50%) 50%, rgba(165, 154, 185, .22), transparent 34%),
+    linear-gradient(90deg, transparent 0, rgba(165, 154, 185, .08) 12%, rgba(79, 127, 217, .16) 30%, rgba(175, 200, 245, .42) 47%, rgba(255, 255, 255, .72) 50%, rgba(175, 200, 245, .32) 54%, rgba(165, 154, 185, .1) 72%, transparent 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(79, 127, 217, .22), 0 0 22px rgba(165, 154, 185, .12);
+  content: "";
+  filter: blur(4px);
+  mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
+  opacity: var(--science-scan-opacity);
+  pointer-events: none;
+  transition: opacity .28s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .science-showcase .science-scan-heading {
+    cursor: default;
+  }
+
+  .science-showcase .science-scan-heading::after {
+    display: none;
+  }
+
+  .science-showcase .science-scan-heading::before {
+    display: none;
+  }
+}
+
+
+/* Science focus-point inspection states — compact scene only. */
+.science-showcase .showcase-data .science-focus-point {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--science-muted);
+  font: inherit;
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color .28s ease, opacity .28s ease;
+}
+
+.science-showcase .showcase-data .science-focus-point b {
+  color: var(--science-blue-soft);
+  margin-right: 8px;
+  transition: color .28s ease;
+}
+
+.science-showcase .showcase-data .science-focus-point:hover,
+.science-showcase .showcase-data .science-focus-point:focus-visible,
+.science-showcase .showcase-data .science-focus-point.is-active {
+  color: var(--science-text);
+}
+
+.science-showcase .showcase-data .science-focus-point.is-active b {
+  color: #ffffff;
+}
+
+.science-showcase .showcase-data .science-focus-point:focus-visible {
+  outline: 1px solid var(--science-blue-soft);
+  outline-offset: 5px;
+}
+
+.science-showcase .showcase-visual .molecular-scene-new.is-compact .protein-model,
+.science-showcase .showcase-visual .molecular-scene-new.is-compact .scaffold-model,
+.science-showcase .showcase-visual .molecular-scene-new.is-compact .interaction-zone,
+.science-showcase .showcase-visual .molecular-scene-new.is-compact .scene-particle-new,
+.science-showcase .showcase-visual .molecular-scene-new.is-compact .scene-orbit-new {
+  transition: opacity .32s ease, filter .32s ease;
+}
+
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-protein .scaffold-model,
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-protein .interaction-zone,
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-protein .scene-particle-new {
+  opacity: .42;
+}
+
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-protein .protein-model {
+  filter: drop-shadow(10px 18px 13px rgba(33, 64, 108, .22)) drop-shadow(0 0 11px rgba(79, 127, 217, .28));
+}
+
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-protein .protein-model::after {
+  position: absolute;
+  inset: -9% -12%;
+  border: 1px solid rgba(175, 200, 245, .58);
+  border-radius: 50%;
+  box-shadow: 0 0 14px rgba(79, 127, 217, .2);
+  content: "";
+  pointer-events: none;
+  transform: rotate(-18deg);
+  animation: scienceProteinFocus 4.8s ease-in-out infinite;
+}
+
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-material .protein-model,
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-material .interaction-zone,
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-material .scene-particle-new {
+  opacity: .48;
+}
+
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-material .scaffold-model {
+  filter: drop-shadow(8px 17px 10px rgba(55, 57, 46, .2)) drop-shadow(0 0 10px rgba(165, 154, 185, .22));
+}
+
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-material .scaffold-model::before {
+  position: absolute;
+  right: -16%;
+  bottom: 82%;
+  left: -16%;
+  z-index: 2;
+  height: 26%;
+  border-top: 1px solid rgba(175, 200, 245, .46);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(165, 154, 185, .22), rgba(79, 127, 217, .08) 45%, transparent 72%);
+  box-shadow: 0 -4px 13px rgba(79, 127, 217, .14);
+  content: "";
+  filter: blur(.2px);
+  opacity: .92;
+  pointer-events: none;
+  animation: scienceMaterialField 3.8s ease-in-out infinite;
+}
+
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-binding .protein-model,
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-binding .scaffold-model,
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-binding .scene-particle-new {
+  opacity: .48;
+}
+
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-binding .interaction-zone {
+  filter: drop-shadow(0 0 8px rgba(79, 127, 217, .28));
+}
+
+.science-showcase .showcase-visual .molecular-scene-new.is-focus-binding .interaction-zone::before {
+  position: absolute;
+  inset: -15px;
+  border: 1px solid rgba(175, 200, 245, .58);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(79, 127, 217, .18), rgba(165, 154, 185, .08) 42%, transparent 70%);
+  box-shadow: 0 0 17px rgba(79, 127, 217, .22);
+  content: "";
+  pointer-events: none;
+  animation: scienceBindingFocus 2.8s ease-in-out infinite;
+}
+
+@keyframes scienceProteinFocus {
+  0%, 100% { opacity: .48; transform: rotate(-18deg) scale(.98); }
+  50% { opacity: .86; transform: rotate(-14deg) scale(1.02); }
+}
+
+@keyframes scienceMaterialField {
+  0%, 100% { opacity: .54; transform: translateY(2px) scaleX(.94); }
+  50% { opacity: .92; transform: translateY(-2px) scaleX(1); }
+}
+
+@keyframes scienceBindingFocus {
+  0%, 100% { opacity: .42; transform: scale(.9); }
+  50% { opacity: .9; transform: scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .science-showcase .showcase-visual .molecular-scene-new.is-focus-protein .protein-model::after,
+  .science-showcase .showcase-visual .molecular-scene-new.is-focus-material .scaffold-model::before,
+  .science-showcase .showcase-visual .molecular-scene-new.is-focus-binding .interaction-zone::before {
+    animation: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .science-showcase .showcase-data .science-focus-point {
+    font-size: 8px;
+  }
+}
+
+
+/* Science inspection rail polish — preserves the existing focus behavior. */
+.science-showcase .showcase-data {
+  right: 5%;
+  bottom: 8%;
+  width: min(330px, 42%);
+  padding: 10px;
+  gap: 6px;
+  border: 1px solid rgba(175, 200, 245, .16);
+  border-left: 1px solid rgba(175, 200, 245, .32);
+  background: linear-gradient(135deg, rgba(24, 31, 37, .84), rgba(16, 20, 22, .72));
+  box-shadow: 0 18px 34px rgba(0, 0, 0, .2), inset 0 1px 0 rgba(245, 240, 230, .05);
+  backdrop-filter: blur(12px);
+}
+
+.science-showcase .showcase-data .science-focus-point {
+  position: relative;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  align-items: center;
+  min-height: 58px;
+  padding: 10px 14px 9px 12px;
+  border-left: 2px solid transparent;
+  color: rgba(232, 226, 213, .72);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: .13em;
+  line-height: 1.2;
+  transition: background .28s ease, border-color .28s ease, color .28s ease, opacity .28s ease;
+}
+
+.science-showcase .showcase-data .science-focus-point b {
+  grid-row: 1 / span 2;
+  margin: 0;
+  color: rgba(175, 200, 245, .82);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+
+.science-showcase .showcase-data .science-focus-point span {
+  overflow: hidden;
+  color: inherit;
+  font-size: 11px;
+  letter-spacing: .13em;
+  text-overflow: ellipsis;
+}
+
+.science-showcase .showcase-data .science-focus-point small {
+  margin-top: 4px;
+  color: rgba(137, 149, 165, .86);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.science-showcase .showcase-data .science-focus-point:hover,
+.science-showcase .showcase-data .science-focus-point:focus-visible {
+  background: rgba(79, 127, 217, .1);
+  border-left-color: rgba(175, 200, 245, .7);
+  color: var(--science-text);
+}
+
+.science-showcase .showcase-data .science-focus-point.is-active {
+  background: linear-gradient(90deg, rgba(79, 127, 217, .16), rgba(165, 154, 185, .06));
+  border-left-color: var(--science-blue-soft);
+  color: var(--science-text);
+  box-shadow: inset 0 1px 0 rgba(175, 200, 245, .06), inset 0 -1px 0 rgba(175, 200, 245, .05);
+}
+
+.science-showcase .showcase-data .science-focus-point.is-active b {
+  color: #ffffff;
+}
+
+.science-showcase .showcase-data .science-focus-point:focus-visible {
+  outline: 1px solid var(--science-blue-soft);
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .science-showcase .showcase-data {
+    right: 5%;
+    bottom: 7%;
+    width: min(330px, 48%);
+  }
+}
+
+@media (max-width: 620px) {
+  .science-showcase .showcase-data {
+    right: 18px;
+    bottom: 7%;
+    left: 18px;
+    width: auto;
+    padding: 8px;
+  }
+
+  .science-showcase .showcase-data .science-focus-point {
+    grid-template-columns: 34px minmax(0, 1fr);
+    min-height: 50px;
+    padding: 8px 10px;
+  }
+
+  .science-showcase .showcase-data .science-focus-point b {
+    font-size: 12px;
+  }
+
+  .science-showcase .showcase-data .science-focus-point span {
+    font-size: 9px;
+  }
+}
+
+
+/* Reference-inspired inspection rail polish — presentation only. */
+.science-showcase .showcase-data {
+  right: 6%;
+  bottom: 8%;
+  width: min(760px, 78%);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.science-showcase .showcase-data .science-focus-point {
+  grid-template-columns: 48px minmax(0, 1fr);
+  min-height: 112px;
+  padding: 16px 15px 14px;
+  border: 1px solid rgba(175, 200, 245, .24);
+  border-left: 1px solid rgba(175, 200, 245, .24);
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(38, 47, 58, .7), rgba(18, 23, 29, .78));
+  box-shadow: inset 0 1px 0 rgba(245, 240, 230, .06), 0 12px 24px rgba(0, 0, 0, .12);
+  color: rgba(232, 226, 213, .78);
+}
+
+.science-showcase .showcase-data .science-focus-point b {
+  align-self: start;
+  font-size: 28px;
+  line-height: .95;
+  color: var(--science-text);
+  letter-spacing: -.04em;
+}
+
+.science-showcase .showcase-data .science-focus-point span {
+  align-self: center;
+  overflow: visible;
+  font-size: 11px;
+  line-height: 1.35;
+  letter-spacing: .11em;
+  white-space: normal;
+}
+
+.science-showcase .showcase-data .science-focus-point small {
+  align-self: start;
+  margin-top: 5px;
+  font-size: 8px;
+  letter-spacing: .18em;
+}
+
+.science-showcase .showcase-data .science-focus-point:hover,
+.science-showcase .showcase-data .science-focus-point:focus-visible {
+  border-color: rgba(175, 200, 245, .62);
+  border-left-color: rgba(175, 200, 245, .62);
+  background: linear-gradient(145deg, rgba(79, 127, 217, .18), rgba(24, 29, 37, .82));
+  box-shadow: inset 0 1px 0 rgba(175, 200, 245, .12), 0 12px 26px rgba(79, 127, 217, .1);
+}
+
+.science-showcase .showcase-data .science-focus-point.is-active {
+  border-color: rgba(175, 200, 245, .72);
+  border-left: 2px solid var(--science-blue-soft);
+  background: linear-gradient(145deg, rgba(79, 127, 217, .22), rgba(165, 154, 185, .1) 72%, rgba(19, 24, 30, .82));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 14px 28px rgba(79, 127, 217, .12);
+}
+
+.science-showcase .showcase-data .science-focus-point.is-active::after {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--science-blue-soft);
+  box-shadow: 0 0 9px rgba(175, 200, 245, .5);
+  content: "";
+}
+
+@media (max-width: 900px) {
+  .science-showcase .showcase-data {
+    right: 5%;
+    bottom: 7%;
+    width: 90%;
+  }
+}
+
+@media (max-width: 620px) {
+  .science-showcase .showcase-data {
+    right: 18px;
+    bottom: 7%;
+    left: 18px;
+    width: auto;
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .science-showcase .showcase-data .science-focus-point {
+    grid-template-columns: 42px minmax(0, 1fr);
+    min-height: 64px;
+    padding: 11px 12px;
+  }
+
+  .science-showcase .showcase-data .science-focus-point b {
+    font-size: 22px;
+  }
+
+  .science-showcase .showcase-data .science-focus-point span {
+    font-size: 9px;
+  }
+}
+
+
+/* Final inspection-rail cascade: horizontal reference-style instrument cards. */
+.science-showcase .showcase-visual > .showcase-data {
+  position: absolute !important;
+  right: 6% !important;
+  bottom: 8% !important;
+  left: auto !important;
+  z-index: 20;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  width: min(760px, 78%) !important;
+  gap: 12px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.science-showcase .showcase-visual > .showcase-data > .science-focus-point {
+  display: grid !important;
+  grid-template-columns: 48px minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+  min-height: 112px !important;
+  padding: 16px 15px 14px !important;
+  border: 1px solid rgba(175, 200, 245, .24) !important;
+  border-left: 1px solid rgba(175, 200, 245, .24) !important;
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(38, 47, 58, .78), rgba(18, 23, 29, .86)) !important;
+  box-shadow: inset 0 1px 0 rgba(245, 240, 230, .06), 0 12px 24px rgba(0, 0, 0, .12) !important;
+  color: rgba(232, 226, 213, .82) !important;
+  font-size: 11px !important;
+  letter-spacing: .11em !important;
+}
+
+.science-showcase .showcase-visual > .showcase-data > .science-focus-point b {
+  grid-row: 1 / span 2 !important;
+  align-self: start;
+  margin: 0 !important;
+  color: var(--science-text) !important;
+  font-size: 28px !important;
+  line-height: .95;
+  letter-spacing: -.04em !important;
+}
+
+.science-showcase .showcase-visual > .showcase-data > .science-focus-point span {
+  display: block;
+  align-self: center;
+  color: inherit !important;
+  font-size: 11px !important;
+  line-height: 1.35;
+  letter-spacing: .11em !important;
+  white-space: normal !important;
+}
+
+.science-showcase .showcase-visual > .showcase-data > .science-focus-point small {
+  display: block;
+  align-self: start;
+  margin-top: 5px;
+  color: rgba(175, 200, 245, .72) !important;
+  font-size: 8px !important;
+  letter-spacing: .18em !important;
+}
+
+.science-showcase .showcase-visual > .showcase-data > .science-focus-point:hover,
+.science-showcase .showcase-visual > .showcase-data > .science-focus-point:focus-visible {
+  border-color: rgba(175, 200, 245, .68) !important;
+  background: linear-gradient(145deg, rgba(79, 127, 217, .2), rgba(24, 29, 37, .88)) !important;
+  color: var(--science-text) !important;
+}
+
+.science-showcase .showcase-visual > .showcase-data > .science-focus-point.is-active {
+  border-color: rgba(175, 200, 245, .76) !important;
+  border-left: 2px solid var(--science-blue-soft) !important;
+  background: linear-gradient(145deg, rgba(79, 127, 217, .24), rgba(165, 154, 185, .1) 72%, rgba(19, 24, 30, .88)) !important;
+  color: var(--science-text) !important;
+}
+
+@media (max-width: 900px) {
+  .science-showcase .showcase-visual > .showcase-data {
+    right: 5% !important;
+    bottom: 7% !important;
+    width: 90% !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .science-showcase .showcase-visual > .showcase-data {
+    right: 18px !important;
+    bottom: 7% !important;
+    left: 18px !important;
+    width: auto !important;
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+  }
+
+  .science-showcase .showcase-visual > .showcase-data > .science-focus-point {
+    grid-template-columns: 42px minmax(0, 1fr) !important;
+    min-height: 64px !important;
+    padding: 11px 12px !important;
+  }
+
+  .science-showcase .showcase-visual > .showcase-data > .science-focus-point b {
+    font-size: 22px !important;
+  }
+
+  .science-showcase .showcase-visual > .showcase-data > .science-focus-point span {
+    font-size: 9px !important;
   }
 }
