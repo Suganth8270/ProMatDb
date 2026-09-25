@@ -3,6 +3,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
 
@@ -15,12 +16,13 @@ from proteins.models import Protein
 
 class DockingWorkerReliabilityTests(TestCase):
     def setUp(self):
+        self.owner = get_user_model().objects.create_user(username="docking-worker-owner", password="safe-test-password")
         self.protein = Protein.objects.create(protein_name="Worker protein", pdb_id="1A4V", uniprot_id="P00003")
         self.biomaterial = Biomaterial.objects.create(name="Worker ligand", pubchem_cid="2244", entity_type="biomaterial")
         self.payload = {"protein_id": self.protein.id, "biomaterial_id": self.biomaterial.id, "ligand_type": "biomaterial", "center_x": 1, "center_y": 2, "center_z": 3, "size_x": 20, "size_y": 20, "size_z": 20}
 
     def test_claim_sets_ownership_attempt_and_lease(self):
-        job = create_docking_job(self.payload)
+        job = create_docking_job(self.payload, owner=self.owner)
         claimed = claim_next_job()
         self.assertIsNotNone(claimed)
         claimed_job, token = claimed
@@ -32,7 +34,7 @@ class DockingWorkerReliabilityTests(TestCase):
         self.assertIsNotNone(claimed_job.last_heartbeat_at)
 
     def test_stale_job_is_failed_without_interaction(self):
-        job = create_docking_job(self.payload)
+        job = create_docking_job(self.payload, owner=self.owner)
         job.status = DockingJob.STATUS_DOCKING
         job.attempt_count = 1
         job.worker_token = __import__("uuid").uuid4()
@@ -51,7 +53,7 @@ class DockingWorkerReliabilityTests(TestCase):
     @patch("interactions.services.docking_worker.run_docking")
     @patch("interactions.services.docking_worker.import_docking_result")
     def test_full_lifecycle_reaches_completed(self, importer, run_docking, prepare_ligand, prepare_receptor):
-        job = create_docking_job(self.payload)
+        job = create_docking_job(self.payload, owner=self.owner)
         claimed = claim_next_job()
         self.assertIsNotNone(claimed)
         claimed_job, token = claimed
@@ -76,7 +78,7 @@ class DockingWorkerReliabilityTests(TestCase):
     def test_failed_jobs_do_not_change_existing_interactions(self):
         existing_2 = Interaction.objects.create(id=2, protein=self.protein, biomaterial=self.biomaterial, binding_energy=-8.5, docking_score=92.4, interaction_type="Adsorption", reference="Interaction 2")
         existing_3 = Interaction.objects.create(id=3, protein=self.protein, biomaterial=self.biomaterial, binding_energy=None, docking_score=-3.759, interaction_type="AutoDock Vina", reference="Interaction 3")
-        job = create_docking_job({**self.payload, "center_x": 9})
+        job = create_docking_job({**self.payload, "center_x": 9}, owner=self.owner)
         job.status = DockingJob.STATUS_FAILED
         job.failure_stage = "docking"
         job.error_message = "validation failed"

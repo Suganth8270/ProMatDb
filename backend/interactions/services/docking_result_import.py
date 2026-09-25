@@ -193,17 +193,23 @@ def import_docking_result(
     biomaterial_id: int,
     output_pdbqt_path: str | Path,
     log_path: str | Path,
+    box,
     vina_version: str = "v1.2.7",
     seed: int = 62024,
     exhaustiveness: int = 8,
     cpu: int = 1,
-    center: tuple[float, float, float] = (6.247, 12.577, 20.937),
-    size: tuple[float, float, float] = (20.0, 20.0, 20.0),
     interaction_type: str = "AutoDock Vina",
 ) -> DockingResultImportResult:
     """Import one existing Vina result without rerunning docking."""
     output_path = Path(output_pdbqt_path)
     artifact_log_path = Path(log_path)
+
+    # The actual box used for this run is always supplied by the caller
+    # (docking_worker.py passes back the DockingBox that was submitted with
+    # the job). There is no historical-default fallback: a docking result
+    # without its real box is not safe to record.
+    center = (box.center_x, box.center_y, box.center_z)
+    size = (box.size_x, box.size_y, box.size_z)
 
     protein = Protein.objects.filter(pk=protein_id).first()
     if protein is None:
@@ -257,7 +263,7 @@ def import_docking_result(
             interaction = Interaction.objects.create(
                 protein=protein,
                 biomaterial=biomaterial,
-                binding_energy=best_affinity,
+                binding_energy=None,
                 docking_score=best_affinity,
                 interaction_type=interaction_type,
                 reference=reference,

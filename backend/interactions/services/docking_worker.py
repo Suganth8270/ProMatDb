@@ -205,6 +205,10 @@ def process_one_job(job: DockingJob, token: uuid.UUID | None = None) -> DockingJ
             output_pdbqt_path=docking_result.output_pdbqt_path,
             log_path=docking_result.log_path,
             vina_version=docking_result.vina_version,
+            seed=docking_result.seed,
+            exhaustiveness=docking_result.exhaustiveness,
+            cpu=docking_result.cpu,
+            box=docking_result.box,
         )
         _finish(job.pk, token, interaction_id=imported.interaction.id)
     except WorkerOwnershipLost:
