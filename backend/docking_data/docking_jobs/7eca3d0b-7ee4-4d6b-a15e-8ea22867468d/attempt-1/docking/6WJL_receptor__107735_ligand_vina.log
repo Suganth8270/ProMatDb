@@ -1,0 +1,45 @@
+Command: C:\Program Files (x86)\The Scripps Research Institute\Vina\vina.exe --receptor D:\ProMatDB\backend\docking_data\docking_jobs\7eca3d0b-7ee4-4d6b-a15e-8ea22867468d\attempt-1\receptor\6WJL_receptor.pdbqt --ligand D:\ProMatDB\backend\docking_data\docking_jobs\7eca3d0b-7ee4-4d6b-a15e-8ea22867468d\attempt-1\ligand\107735_ligand.pdbqt --center_x -5.699 --center_y -21.092 --center_z 29.650 --size_x 20.000 --size_y 20.000 --size_z 20.000 --exhaustiveness 8 --cpu 1 --seed 62024 --num_modes 9 --energy_range 3.000 --out D:\ProMatDB\backend\docking_data\docking_jobs\7eca3d0b-7ee4-4d6b-a15e-8ea22867468d\attempt-1\docking\6WJL_receptor__107735_ligand_vina_out.pdbqt
+
+STDOUT:
+#################################################################
+# If you used AutoDock Vina in your work, please cite:          #
+#                                                               #
+# O. Trott, A. J. Olson,                                        #
+# AutoDock Vina: improving the speed and accuracy of docking    #
+# with a new scoring function, efficient optimization and       #
+# multithreading, Journal of Computational Chemistry 31 (2010)  #
+# 455-461                                                       #
+#                                                               #
+# DOI 10.1002/jcc.21334                                         #
+#                                                               #
+# Please see http://vina.scripps.edu for more information.      #
+#################################################################
+
+Reading input ... done.
+Setting up the scoring function ... done.
+Analyzing the binding site ... done.
+Using random seed: 62024
+Performing search ... 
+0%   10   20   30   40   50   60   70   80   90   100%
+|----|----|----|----|----|----|----|----|----|----|
+***************************************************
+done.
+Refining results ... done.
+
+mode |   affinity | dist from best mode
+     | (kcal/mol) | rmsd l.b.| rmsd u.b.
+-----+------------+----------+----------
+   1         -2.8      0.000      0.000
+   2         -2.7      0.902      2.250
+   3         -2.5     17.770     18.310
+   4         -2.5      1.540      2.054
+   5         -2.5     18.632     19.161
+   6         -2.4      1.668      2.334
+   7         -2.4      0.991      2.038
+   8         -2.2     17.543     18.256
+   9         -2.1      1.701      2.216
+Writing output ... done.
+
+
+STDERR:
+

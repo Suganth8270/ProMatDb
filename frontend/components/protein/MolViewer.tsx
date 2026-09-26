@@ -88,6 +88,16 @@ export default function MolViewer({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pluginRef = useRef<PluginUIContext | null>(null);
   const requestIdRef = useRef(0);
+
+  // Mol* uses ReactDOMClient.createRoot() internally. In React Strict Mode,
+  // effects are intentionally mounted, cleaned up, and mounted again in
+  // development. Keep one initialization promise so those two effect passes
+  // can never call createPluginUI() twice for the same DOM container.
+  const initPromiseRef = useRef<Promise<PluginUIContext> | null>(null);
+  const mountedRef = useRef(false);
+  const cleanupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const initialLoadPluginRef = useRef<PluginUIContext | null>(null);
+  const clickSubscriptionRef = useRef<{ unsubscribe: () => void } | null>(null);
   const instanceId = useId();
   const invalidateRequests = useCallback(() => {
     requestIdRef.current++;
@@ -143,52 +153,85 @@ export default function MolViewer({
   }, []);
 
   // Initialize the plugin once on mount, tear it down on unmount.
- useEffect(() => {
-  let cancelled = false;
-  let clickSubscription: { unsubscribe: () => void } | undefined;
+  useEffect(() => {
+    mountedRef.current = true;
 
-  async function init() {
-    if (!containerRef.current) return;
-
-    // Destroy existing plugin (React Strict Mode fix)
-    if (pluginRef.current) {
-      pluginRef.current.dispose();
-      pluginRef.current = null;
+    // React Strict Mode performs a setup -> cleanup -> setup cycle in
+    // development. Cancel the deferred cleanup when the second setup arrives.
+    if (cleanupTimerRef.current !== null) {
+      clearTimeout(cleanupTimerRef.current);
+      cleanupTimerRef.current = null;
     }
 
-    // Clear previous React root
-    containerRef.current.innerHTML = "";
+    async function init() {
+      const container = containerRef.current;
+      if (!container) return;
 
-    try {
-      const plugin = await createPluginUI({
-        target: containerRef.current,
-        spec: buildSpec(showControls),
-        render: renderReact18,
-      });
+      try {
+        let plugin: PluginUIContext;
 
-        if (cancelled) {
+        // Reuse an initialization already in progress. This is the critical
+        // Strict Mode protection: createPluginUI() must run only once per
+        // container while the first initialization is pending.
+        if (initPromiseRef.current) {
+          plugin = await initPromiseRef.current;
+        } else if (pluginRef.current) {
+          plugin = pluginRef.current;
+        } else {
+          // Do not manually clear innerHTML here. Mol* owns the React root
+          // inside this container and will dispose it through PluginContext.
+          const promise = createPluginUI({
+            target: container,
+            spec: buildSpec(showControls),
+            render: renderReact18,
+          });
+
+          initPromiseRef.current = promise;
+          plugin = await promise;
+        }
+
+        // If this component was genuinely unmounted and not immediately
+        // remounted by Strict Mode, do not attach anything to the old plugin.
+        if (!mountedRef.current) {
           plugin.dispose();
+          initPromiseRef.current = null;
           return;
         }
 
         pluginRef.current = plugin;
+        initPromiseRef.current = Promise.resolve(plugin);
 
         // Read only a genuine atomic structure-space location. Do not use
         // event.position or any mouse/canvas/screen coordinate conversion.
-        clickSubscription = plugin.behaviors.interaction.click.subscribe((event) => {
+        if (!clickSubscriptionRef.current) {
+          clickSubscriptionRef.current = plugin.behaviors.interaction.click.subscribe((event) => {
           if (!onAtomicCoordinatePick) return;
+
           const loci = event.current?.loci;
           if (!loci || !StructureElement.Loci.is(loci)) return;
           if (loci.elements.length !== 1) return;
+
           const unitLoci = loci.elements[0];
-          if (OrderedSet.size(unitLoci.indices) !== 1 || !Unit.isAtomic(unitLoci.unit)) return;
+
+          if (
+            OrderedSet.size(unitLoci.indices) !== 1 ||
+            !Unit.isAtomic(unitLoci.unit)
+          ) {
+            return;
+          }
 
           const unitIndex = OrderedSet.getAt(unitLoci.indices, 0);
           const element = unitLoci.unit.elements[unitIndex];
-          const location = StructureElement.Location.create(loci.structure, unitLoci.unit, element);
+          const location = StructureElement.Location.create(
+            loci.structure,
+            unitLoci.unit,
+            element
+          );
+
           const x = StructureProperties.atom.x(location);
           const y = StructureProperties.atom.y(location);
           const z = StructureProperties.atom.z(location);
+
           if (![x, y, z].every(Number.isFinite)) return;
 
           onAtomicCoordinatePick({
@@ -198,38 +241,73 @@ export default function MolViewer({
             units: "angstrom",
             structureLabel: loci.structure.label,
             modelIndex: StructureProperties.unit.model_index(location),
-            assemblyId: StructureProperties.unit.pdbx_struct_assembly_id(location),
+            assemblyId:
+              StructureProperties.unit.pdbx_struct_assembly_id(location),
             atomName: StructureProperties.atom.auth_atom_id(location),
             residueName: StructureProperties.atom.auth_comp_id(location),
             authAsymId: StructureProperties.chain.auth_asym_id(location),
             authSeqId: StructureProperties.residue.auth_seq_id(location),
           });
         });
+        }
 
-        if (pdbId) {
-          await loadStructure(plugin, pdbId);
-        } else {
-          setStatus("idle");
+        // Load the initial structure only once for this plugin instance.
+        // The separate pdbId effect handles later pdbId changes.
+        if (initialLoadPluginRef.current !== plugin) {
+          initialLoadPluginRef.current = plugin;
+
+          if (pdbId) {
+            await loadStructure(plugin, pdbId);
+          } else {
+            setStatus("idle");
+          }
         }
       } catch (err) {
-        if (cancelled) return;
+        if (!mountedRef.current) return;
+
         const message =
-          err instanceof Error ? err.message : "Failed to initialize the molecular viewer.";
+          err instanceof Error
+            ? err.message
+            : "Failed to initialize the molecular viewer.";
+
         setErrorMessage(message);
         setStatus("error");
       }
     }
 
-    init();
+    void init();
 
     return () => {
-      cancelled = true;
-      invalidateRequests(); // invalidate any in-flight load
-      clickSubscription?.unsubscribe();
-      clickSubscription = undefined;
-      pluginRef.current?.dispose();
-      pluginRef.current = null;
+      mountedRef.current = false;
+      invalidateRequests();
+
+      // Do not unsubscribe/dispose synchronously. React Strict Mode
+      // immediately runs the next effect setup after this cleanup.
+      // Keeping both alive until the deferred cleanup prevents a second
+      // createRoot() call and also keeps a just-created subscription usable.
+      // Do not dispose synchronously. React Strict Mode immediately runs the
+      // next effect setup after this cleanup. A zero-delay deferred cleanup
+      // lets that setup cancel disposal and reuse the same Mol* root.
+      cleanupTimerRef.current = setTimeout(() => {
+        cleanupTimerRef.current = null;
+
+        if (mountedRef.current) return;
+
+        clickSubscriptionRef.current?.unsubscribe();
+        clickSubscriptionRef.current = null;
+
+        pluginRef.current?.dispose();
+        pluginRef.current = null;
+        initPromiseRef.current = null;
+        initialLoadPluginRef.current = null;
+
+        const container = containerRef.current;
+        if (container) {
+          container.replaceChildren();
+        }
+      }, 0);
     };
+
     // Intentionally initialize the plugin only once per mount; pdbId and
     // showControls changes are handled by the effects below instead of a
     // full re-init, since disposing/recreating the WebGL context on every
