@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+  type PointerEvent,
+} from "react";
 import {
   ArrowRight,
   Atom,
@@ -21,34 +27,97 @@ import { getBiomaterials, getProteins } from "@/services/api";
 import MolecularScene from "./MolecularScene";
 import ScientificScrollTransition from "./ScientificScrollTransition";
 import BiotechParallaxSection from "./BiotechParallaxSection";
+import ZuzuCompanion from "@/components/zuzu/ZuzuCompanion";
 
 const navItems = ["Features", "Data Sources", "Explore", "About", "Contact"];
+
 type ScienceFocus = "neutral" | "protein" | "material" | "binding";
 
 const featureCards = [
-  { icon: Dna, tone: "ivory", eyebrow: "01 / BIOLOGY", title: "Explore Proteins", copy: "Search and browse protein records with sequence, structure, and biological context.", href: "/proteins" },
-  { icon: Layers3, tone: "blue", eyebrow: "02 / MATERIALS", title: "Explore Biomaterials", copy: "Discover natural and synthetic materials with properties shaped for research.", href: "/biomaterials" },
-  { icon: CircleDot, tone: "lavender", eyebrow: "03 / INTERACTION", title: "Analyze Interactions", copy: "Study protein–biomaterial relationships and the evidence behind each record.", href: "/interactions" },
-  { icon: Microscope, tone: "ivory", eyebrow: "04 / VISUALIZATION", title: "See It in 3D", copy: "Move from molecular structure to a more intuitive understanding of form.", href: "/workspace" },
+  {
+    icon: Dna,
+    tone: "ivory",
+    eyebrow: "01 / BIOLOGY",
+    title: "Explore Proteins",
+    copy: "Search and browse protein records with sequence, structure, and biological context.",
+    href: "/proteins",
+  },
+  {
+    icon: Layers3,
+    tone: "blue",
+    eyebrow: "02 / MATERIALS",
+    title: "Explore Biomaterials",
+    copy: "Discover natural and synthetic materials with properties shaped for research.",
+    href: "/biomaterials",
+  },
+  {
+    icon: CircleDot,
+    tone: "lavender",
+    eyebrow: "03 / INTERACTION",
+    title: "Analyze Interactions",
+    copy: "Study protein–biomaterial relationships and the evidence behind each record.",
+    href: "/interactions",
+  },
+  {
+    icon: Microscope,
+    tone: "ivory",
+    eyebrow: "04 / VISUALIZATION",
+    title: "See It in 3D",
+    copy: "Move from molecular structure to a more intuitive understanding of form.",
+    href: "/workspace",
+  },
 ];
 
 function handleFeatureCardGlow(event: MouseEvent<HTMLAnchorElement>) {
   const rect = event.currentTarget.getBoundingClientRect();
-  event.currentTarget.style.setProperty("--mx", `${event.clientX - rect.left}px`);
-  event.currentTarget.style.setProperty("--my", `${event.clientY - rect.top}px`);
+  event.currentTarget.style.setProperty(
+    "--mx",
+    `${event.clientX - rect.left}px`,
+  );
+  event.currentTarget.style.setProperty(
+    "--my",
+    `${event.clientY - rect.top}px`,
+  );
 }
 
-const FEATURES_HEADING = "Research becomes clearer when the pieces connect.";
+const FEATURES_HEADING =
+  "Research becomes clearer when the pieces connect.";
 const DATA_SOURCES_HEADING = "Built on scientific data.";
-const MISSION_HEADING = "Building Bridges Between Biology, Materials and Innovation";
-const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const MISSION_HEADING =
+  "Building Bridges Between Biology, Materials and Innovation";
+const SCRAMBLE_CHARS =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 const SCRAMBLE_DURATION_MS = 1600;
 
 const snapshotResearchPages = [
-  { eyebrow: "01 / PROTEIN", title: "Lactotransferrin", code: "P02788", detail: "Structure 1B0L · Source UniProt", href: "/proteins" },
-  { eyebrow: "02 / BIOMATERIAL", title: "Cellulose", code: "BIOMATERIAL RECORD", detail: "Category Biomaterial · Source ProMatDB", href: "/biomaterials" },
-  { eyebrow: "03 / INTERACTION", title: "Lactotransferrin ↔ Cellulose", code: "PROTEIN–BIOMATERIAL INTERACTION", detail: "Status Available", href: "/interactions" },
-  { eyebrow: "04 / DOCKING", title: "AutoDock Vina", code: "BEST POSE 1", detail: "Binding energy −2.88 kcal/mol · PDB 1B0L", href: "/docking" },
+  {
+    eyebrow: "01 / PROTEIN",
+    title: "Lactotransferrin",
+    code: "P02788",
+    detail: "Structure 1B0L · Source UniProt",
+    href: "/proteins",
+  },
+  {
+    eyebrow: "02 / BIOMATERIAL",
+    title: "Cellulose",
+    code: "BIOMATERIAL RECORD",
+    detail: "Category Biomaterial · Source ProMatDB",
+    href: "/biomaterials",
+  },
+  {
+    eyebrow: "03 / INTERACTION",
+    title: "Lactotransferrin ↔ Cellulose",
+    code: "PROTEIN–BIOMATERIAL INTERACTION",
+    detail: "Status Available",
+    href: "/interactions",
+  },
+  {
+    eyebrow: "04 / DOCKING",
+    title: "AutoDock Vina",
+    code: "BEST POSE 1",
+    detail: "Binding energy −2.88 kcal/mol · PDB 1B0L",
+    href: "/docking",
+  },
 ] as const;
 
 function randomScrambleChar() {
@@ -68,7 +137,8 @@ const journey = [
     icon: Dna,
     eyebrow: "01 / PROTEIN",
     headline: "From sequence to structure",
-    description: "Search and explore protein records with sequence, structure, and biological context.",
+    description:
+      "Search and explore protein records with sequence, structure, and biological context.",
     bullets: ["Sequence data", "3D structure", "Biological context"],
     cta: { label: "Explore Proteins", href: "/proteins" },
   },
@@ -79,7 +149,8 @@ const journey = [
     icon: Layers3,
     eyebrow: "02 / BIOMATERIAL",
     headline: "Properties + context",
-    description: "Natural and synthetic biomaterials with properties and research context.",
+    description:
+      "Natural and synthetic biomaterials with properties and research context.",
   },
   {
     number: "03",
@@ -88,7 +159,8 @@ const journey = [
     icon: CircleDot,
     eyebrow: "03 / INTERACTION",
     headline: "Molecular interface",
-    description: "Explore protein–biomaterial relationships and interaction evidence.",
+    description:
+      "Explore protein–biomaterial relationships and interaction evidence.",
   },
   {
     number: "04",
@@ -97,7 +169,8 @@ const journey = [
     icon: Database,
     eyebrow: "04 / DOCKING",
     headline: "Computed insight",
-    description: "Understand docking results, binding poses, and interaction evidence.",
+    description:
+      "Understand docking results, binding poses, and interaction evidence.",
   },
   {
     number: "05",
@@ -106,7 +179,8 @@ const journey = [
     icon: Microscope,
     eyebrow: "05 / 3D ANALYSIS",
     headline: "Spatial understanding",
-    description: "Explore molecular structures and interaction geometry in three dimensions.",
+    description:
+      "Explore molecular structures and interaction geometry in three dimensions.",
   },
   {
     number: "06",
@@ -115,23 +189,59 @@ const journey = [
     icon: Sparkles,
     eyebrow: "06 / RESEARCH INSIGHT",
     headline: "A clearer next step",
-    description: "Connect the evidence into a more meaningful research direction.",
+    description:
+      "Connect the evidence into a more meaningful research direction.",
   },
 ] as const;
 
 const sources = [
-  ["UniProt", "Protein sequence and biological information.", "EXTERNAL DATA", "blue", "/source-images/uniprot-protein.jpg", "https://www.uniprot.org/"],
-  ["PDB", "Protein structural information.", "EXTERNAL DATA", "lavender", "/source-images/pdb-structure.jpg", "https://www.rcsb.org/"],
-  ["PubChem", "Chemical and compound information.", "EXTERNAL DATA", "ivory", "/source-images/pubchem-molecule.jpg", "https://pubchem.ncbi.nlm.nih.gov/"],
-  ["AutoDock Vina", "Computed docking results.", "COMPUTED RESULTS", "charcoal", "/source-images/autodock-vina-docking.jpg", "https://vina.scripps.edu/"],
+  [
+    "UniProt",
+    "Protein sequence and biological information.",
+    "EXTERNAL DATA",
+    "blue",
+    "/source-images/uniprot-protein.jpg",
+    "https://www.uniprot.org/",
+  ],
+  [
+    "PDB",
+    "Protein structural information.",
+    "EXTERNAL DATA",
+    "lavender",
+    "/source-images/pdb-structure.jpg",
+    "https://www.rcsb.org/",
+  ],
+  [
+    "PubChem",
+    "Chemical and compound information.",
+    "EXTERNAL DATA",
+    "ivory",
+    "/source-images/pubchem-molecule.jpg",
+    "https://pubchem.ncbi.nlm.nih.gov/",
+  ],
+  [
+    "AutoDock Vina",
+    "Computed docking results.",
+    "COMPUTED RESULTS",
+    "charcoal",
+    "/source-images/autodock-vina-docking.jpg",
+    "https://vina.scripps.edu/",
+  ],
 ];
 
-type Metric = { label: string; value: number | null; suffix?: string };
+type Metric = {
+  label: string;
+  value: number | null;
+  suffix?: string;
+};
 
 function CountMetric({ metric }: { metric: Metric }) {
   return (
     <div className="landing-metric">
-      <strong>{metric.value === null ? "—" : metric.value.toLocaleString()}{metric.suffix}</strong>
+      <strong>
+        {metric.value === null ? "—" : metric.value.toLocaleString()}
+        {metric.suffix}
+      </strong>
       <span>{metric.label}</span>
     </div>
   );
@@ -142,9 +252,12 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [featuresVisible, setFeaturesVisible] = useState(false);
   const featuresRef = useRef<HTMLElement | null>(null);
-  const [featuresHeadingText, setFeaturesHeadingText] = useState(FEATURES_HEADING);
+  const [featuresHeadingText, setFeaturesHeadingText] =
+    useState(FEATURES_HEADING);
   const dataSourcesRef = useRef<HTMLElement | null>(null);
-  const [dataSourcesHeadingText, setDataSourcesHeadingText] = useState(DATA_SOURCES_HEADING);
+  const [dataSourcesHeadingText, setDataSourcesHeadingText] = useState(
+    DATA_SOURCES_HEADING,
+  );
   const scrambleFrameRef = useRef<number | null>(null);
   const scrambleStartRef = useRef<number | null>(null);
   const isScramblingRef = useRef(false);
@@ -152,13 +265,16 @@ export default function LandingPage() {
   const dataSourcesScrambleStartRef = useRef<number | null>(null);
   const isDataSourcesScramblingRef = useRef(false);
   const missionRef = useRef<HTMLElement | null>(null);
-  const [missionHeadingText, setMissionHeadingText] = useState(MISSION_HEADING);
+  const [missionHeadingText, setMissionHeadingText] =
+    useState(MISSION_HEADING);
   const missionScrambleFrameRef = useRef<number | null>(null);
   const missionScrambleStartRef = useRef<number | null>(null);
   const isMissionScramblingRef = useRef(false);
   const snapshotRef = useRef<HTMLElement | null>(null);
   const [snapshotVisible, setSnapshotVisible] = useState(false);
-  const [snapshotResearchIndex, setSnapshotResearchIndex] = useState<number | null>(null);
+  const [snapshotResearchIndex, setSnapshotResearchIndex] = useState<
+    number | null
+  >(null);
   const [snapshotOpening, setSnapshotOpening] = useState(false);
   const snapshotOpenTimerRef = useRef<number | null>(null);
   const [metrics, setMetrics] = useState<Metric[]>([
@@ -168,7 +284,8 @@ export default function LandingPage() {
     { label: "Imported today", value: null },
   ]);
   const [journeyActive, setJourneyActive] = useState(0);
-  const [scienceFocus, setScienceFocus] = useState<ScienceFocus>("neutral");
+  const [scienceFocus, setScienceFocus] =
+    useState<ScienceFocus>("neutral");
   const journeyManualRef = useRef(false);
   const journeyLineRef = useRef<HTMLDivElement | null>(null);
   const scienceHeadingRef = useRef<HTMLHeadingElement | null>(null);
@@ -189,8 +306,6 @@ export default function LandingPage() {
     const node = featuresRef.current;
     if (!node) return;
 
-    // Once the section has entered the viewport, keep the reveal applied —
-    // no need to reset the animation every time it scrolls out again.
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -200,7 +315,7 @@ export default function LandingPage() {
           }
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
 
     observer.observe(node);
@@ -220,7 +335,7 @@ export default function LandingPage() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -12% 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -12% 0px" },
     );
 
     observer.observe(node);
@@ -232,14 +347,16 @@ export default function LandingPage() {
     if (!node) return;
 
     const observer = new IntersectionObserver(
-      (entries) => entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          handleMissionHeadingEnter();
-          observer.unobserve(entry.target);
-        }
-      }),
-      { threshold: 0.18 }
+      (entries) =>
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            handleMissionHeadingEnter();
+            observer.unobserve(entry.target);
+          }
+        }),
+      { threshold: 0.18 },
     );
+
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
@@ -257,7 +374,7 @@ export default function LandingPage() {
           }
         });
       },
-      { threshold: 0.16 }
+      { threshold: 0.16 },
     );
 
     observer.observe(node);
@@ -269,18 +386,23 @@ export default function LandingPage() {
       if (scrambleFrameRef.current !== null) {
         cancelAnimationFrame(scrambleFrameRef.current);
       }
+
       if (dataSourcesScrambleFrameRef.current !== null) {
         cancelAnimationFrame(dataSourcesScrambleFrameRef.current);
       }
+
       if (missionScrambleFrameRef.current !== null) {
         cancelAnimationFrame(missionScrambleFrameRef.current);
       }
+
       if (scienceScanFrameRef.current !== null) {
         cancelAnimationFrame(scienceScanFrameRef.current);
       }
+
       if (snapshotOpenTimerRef.current !== null) {
         window.clearTimeout(snapshotOpenTimerRef.current);
       }
+
       if (footerCubeTimerRef.current !== null) {
         window.clearTimeout(footerCubeTimerRef.current);
       }
@@ -290,28 +412,50 @@ export default function LandingPage() {
   const scheduleScienceScan = (x: number, opacity: number) => {
     const node = scienceHeadingRef.current;
     if (!node || prefersReducedMotion()) return;
+
     scienceScanTargetRef.current = { x, opacity };
+
     if (scienceScanFrameRef.current !== null) return;
 
     const settle = () => {
       const target = scienceScanTargetRef.current;
       const current = scienceScanCurrentRef.current;
-      scienceScanTrailRef.current = current.x - (target.x - current.x) * 0.18;
+
+      scienceScanTrailRef.current =
+        current.x - (target.x - current.x) * 0.18;
+
       current.x += (target.x - current.x) * 0.18;
       current.opacity += (target.opacity - current.opacity) * 0.2;
+
       node.style.setProperty("--science-scan-x", `${current.x}%`);
-      node.style.setProperty("--science-scan-trail-x", `${scienceScanTrailRef.current}%`);
-      node.style.setProperty("--science-scan-opacity", `${current.opacity}`);
+      node.style.setProperty(
+        "--science-scan-trail-x",
+        `${scienceScanTrailRef.current}%`,
+      );
+      node.style.setProperty(
+        "--science-scan-opacity",
+        `${current.opacity}`,
+      );
 
       const positionSettled = Math.abs(target.x - current.x) < 0.12;
-      const opacitySettled = Math.abs(target.opacity - current.opacity) < 0.015;
+      const opacitySettled =
+        Math.abs(target.opacity - current.opacity) < 0.015;
+
       if (positionSettled && opacitySettled) {
         current.x = target.x;
         current.opacity = target.opacity;
         scienceScanTrailRef.current = current.x;
+
         node.style.setProperty("--science-scan-x", `${current.x}%`);
-        node.style.setProperty("--science-scan-trail-x", `${scienceScanTrailRef.current}%`);
-        node.style.setProperty("--science-scan-opacity", `${current.opacity}`);
+        node.style.setProperty(
+          "--science-scan-trail-x",
+          `${scienceScanTrailRef.current}%`,
+        );
+        node.style.setProperty(
+          "--science-scan-opacity",
+          `${current.opacity}`,
+        );
+
         scienceScanFrameRef.current = null;
         return;
       }
@@ -322,9 +466,18 @@ export default function LandingPage() {
     scienceScanFrameRef.current = requestAnimationFrame(settle);
   };
 
-  const handleScienceHeadingMove = (event: PointerEvent<HTMLHeadingElement>) => {
+  const handleScienceHeadingMove = (
+    event: PointerEvent<HTMLHeadingElement>,
+  ) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    const x = Math.min(100, Math.max(0, ((event.clientX - rect.left) / rect.width) * 100));
+    const x = Math.min(
+      100,
+      Math.max(
+        0,
+        ((event.clientX - rect.left) / rect.width) * 100,
+      ),
+    );
+
     scheduleScienceScan(x, 1);
   };
 
@@ -332,14 +485,21 @@ export default function LandingPage() {
     scheduleScienceScan(scienceScanTargetRef.current.x, 0);
   };
 
-  const handleSciencePointLeave = (event: PointerEvent<HTMLButtonElement>) => {
+  const handleSciencePointLeave = (
+    event: PointerEvent<HTMLButtonElement>,
+  ) => {
     if (event.pointerType !== "touch") setScienceFocus("neutral");
   };
 
   const handleFooterCubeClick = () => {
     if (footerCubeBurst) return;
-    if (footerCubeTimerRef.current !== null) window.clearTimeout(footerCubeTimerRef.current);
+
+    if (footerCubeTimerRef.current !== null) {
+      window.clearTimeout(footerCubeTimerRef.current);
+    }
+
     setFooterCubeBurst(true);
+
     footerCubeTimerRef.current = window.setTimeout(() => {
       setFooterCubeBurst(false);
       footerCubeTimerRef.current = null;
@@ -348,9 +508,16 @@ export default function LandingPage() {
 
   const openSnapshotResearch = (startIndex = 0) => {
     if (snapshotOpening || snapshotResearchIndex !== null) return;
+
     setSnapshotOpening(true);
+
     snapshotOpenTimerRef.current = window.setTimeout(() => {
-      setSnapshotResearchIndex(Math.min(snapshotResearchPages.length - 1, Math.max(0, startIndex)));
+      setSnapshotResearchIndex(
+        Math.min(
+          snapshotResearchPages.length - 1,
+          Math.max(0, startIndex),
+        ),
+      );
       setSnapshotOpening(false);
       snapshotOpenTimerRef.current = null;
     }, 720);
@@ -362,39 +529,65 @@ export default function LandingPage() {
   };
 
   const advanceSnapshotResearch = () => {
-    setSnapshotResearchIndex((current) => current === null ? 0 : Math.min(snapshotResearchPages.length - 1, current + 1));
+    setSnapshotResearchIndex((current) =>
+      current === null
+        ? 0
+        : Math.min(snapshotResearchPages.length - 1, current + 1),
+    );
   };
 
   const handleFeaturesHeadingEnter = () => {
     if (isScramblingRef.current || prefersReducedMotion()) return;
+
     isScramblingRef.current = true;
     scrambleStartRef.current = null;
 
     const chars = FEATURES_HEADING.split("");
-    const scrambleIndices = chars.reduce<number[]>((acc, char, i) => {
-      if (/[A-Za-z0-9]/.test(char)) acc.push(i);
-      return acc;
-    }, []);
+
+    const scrambleIndices = chars.reduce<number[]>(
+      (acc, char, i) => {
+        if (/[A-Za-z0-9]/.test(char)) acc.push(i);
+        return acc;
+      },
+      [],
+    );
+
     const totalScramble = scrambleIndices.length;
 
     const step = (timestamp: number) => {
-      if (scrambleStartRef.current === null) scrambleStartRef.current = timestamp;
-      const elapsed = timestamp - scrambleStartRef.current;
-      const progress = Math.min(elapsed / SCRAMBLE_DURATION_MS, 1);
-      const resolvedCount = Math.floor(progress * totalScramble);
+      if (scrambleStartRef.current === null) {
+        scrambleStartRef.current = timestamp;
+      }
+
+      const elapsed =
+        timestamp - scrambleStartRef.current;
+
+      const progress = Math.min(
+        elapsed / SCRAMBLE_DURATION_MS,
+        1,
+      );
+
+      const resolvedCount = Math.floor(
+        progress * totalScramble,
+      );
 
       const next = chars
         .map((char, i) => {
-          if (!/[A-Za-z0-9]/.test(char)) return char; // spaces & punctuation stay fixed
+          if (!/[A-Za-z0-9]/.test(char)) return char;
+
           const orderIndex = scrambleIndices.indexOf(i);
-          return orderIndex < resolvedCount ? char : randomScrambleChar();
+
+          return orderIndex < resolvedCount
+            ? char
+            : randomScrambleChar();
         })
         .join("");
 
       setFeaturesHeadingText(next);
 
       if (progress < 1) {
-        scrambleFrameRef.current = requestAnimationFrame(step);
+        scrambleFrameRef.current =
+          requestAnimationFrame(step);
       } else {
         setFeaturesHeadingText(FEATURES_HEADING);
         isScramblingRef.current = false;
@@ -407,35 +600,65 @@ export default function LandingPage() {
   };
 
   const handleDataSourcesHeadingEnter = () => {
-    if (isDataSourcesScramblingRef.current || prefersReducedMotion()) return;
+    if (
+      isDataSourcesScramblingRef.current ||
+      prefersReducedMotion()
+    ) {
+      return;
+    }
+
     isDataSourcesScramblingRef.current = true;
     dataSourcesScrambleStartRef.current = null;
 
     const chars = DATA_SOURCES_HEADING.split("");
-    const scrambleIndices = chars.reduce<number[]>((acc, char, i) => {
-      if (/[A-Za-z0-9]/.test(char)) acc.push(i);
-      return acc;
-    }, []);
+
+    const scrambleIndices = chars.reduce<number[]>(
+      (acc, char, i) => {
+        if (/[A-Za-z0-9]/.test(char)) acc.push(i);
+        return acc;
+      },
+      [],
+    );
+
     const totalScramble = scrambleIndices.length;
 
     const step = (timestamp: number) => {
-      if (dataSourcesScrambleStartRef.current === null) dataSourcesScrambleStartRef.current = timestamp;
-      const elapsed = timestamp - dataSourcesScrambleStartRef.current;
-      const progress = Math.min(elapsed / SCRAMBLE_DURATION_MS, 1);
-      const resolvedCount = Math.floor(progress * totalScramble);
+      if (
+        dataSourcesScrambleStartRef.current === null
+      ) {
+        dataSourcesScrambleStartRef.current = timestamp;
+      }
+
+      const elapsed =
+        timestamp -
+        dataSourcesScrambleStartRef.current;
+
+      const progress = Math.min(
+        elapsed / SCRAMBLE_DURATION_MS,
+        1,
+      );
+
+      const resolvedCount = Math.floor(
+        progress * totalScramble,
+      );
 
       const next = chars
         .map((char, i) => {
           if (!/[A-Za-z0-9]/.test(char)) return char;
+
           const orderIndex = scrambleIndices.indexOf(i);
-          return orderIndex < resolvedCount ? char : randomScrambleChar();
+
+          return orderIndex < resolvedCount
+            ? char
+            : randomScrambleChar();
         })
         .join("");
 
       setDataSourcesHeadingText(next);
 
       if (progress < 1) {
-        dataSourcesScrambleFrameRef.current = requestAnimationFrame(step);
+        dataSourcesScrambleFrameRef.current =
+          requestAnimationFrame(step);
       } else {
         setDataSourcesHeadingText(DATA_SOURCES_HEADING);
         isDataSourcesScramblingRef.current = false;
@@ -444,34 +667,67 @@ export default function LandingPage() {
       }
     };
 
-    dataSourcesScrambleFrameRef.current = requestAnimationFrame(step);
+    dataSourcesScrambleFrameRef.current =
+      requestAnimationFrame(step);
   };
 
   const handleMissionHeadingEnter = () => {
-    if (isMissionScramblingRef.current || prefersReducedMotion()) return;
+    if (
+      isMissionScramblingRef.current ||
+      prefersReducedMotion()
+    ) {
+      return;
+    }
+
     isMissionScramblingRef.current = true;
     missionScrambleStartRef.current = null;
 
     const chars = MISSION_HEADING.split("");
-    const scrambleIndices = chars.reduce<number[]>((acc, char, i) => {
-      if (/[A-Za-z0-9]/.test(char)) acc.push(i);
-      return acc;
-    }, []);
+
+    const scrambleIndices = chars.reduce<number[]>(
+      (acc, char, i) => {
+        if (/[A-Za-z0-9]/.test(char)) acc.push(i);
+        return acc;
+      },
+      [],
+    );
+
     const totalScramble = scrambleIndices.length;
 
     const step = (timestamp: number) => {
-      if (missionScrambleStartRef.current === null) missionScrambleStartRef.current = timestamp;
-      const elapsed = timestamp - missionScrambleStartRef.current;
-      const progress = Math.min(elapsed / SCRAMBLE_DURATION_MS, 1);
-      const resolvedCount = Math.floor(progress * totalScramble);
-      setMissionHeadingText(chars.map((char, i) => {
-        if (!/[A-Za-z0-9]/.test(char)) return char;
-        const orderIndex = scrambleIndices.indexOf(i);
-        return orderIndex < resolvedCount ? char : randomScrambleChar();
-      }).join(""));
+      if (missionScrambleStartRef.current === null) {
+        missionScrambleStartRef.current = timestamp;
+      }
+
+      const elapsed =
+        timestamp - missionScrambleStartRef.current;
+
+      const progress = Math.min(
+        elapsed / SCRAMBLE_DURATION_MS,
+        1,
+      );
+
+      const resolvedCount = Math.floor(
+        progress * totalScramble,
+      );
+
+      setMissionHeadingText(
+        chars
+          .map((char, i) => {
+            if (!/[A-Za-z0-9]/.test(char)) return char;
+
+            const orderIndex = scrambleIndices.indexOf(i);
+
+            return orderIndex < resolvedCount
+              ? char
+              : randomScrambleChar();
+          })
+          .join(""),
+      );
 
       if (progress < 1) {
-        missionScrambleFrameRef.current = requestAnimationFrame(step);
+        missionScrambleFrameRef.current =
+          requestAnimationFrame(step);
       } else {
         setMissionHeadingText(MISSION_HEADING);
         isMissionScramblingRef.current = false;
@@ -480,58 +736,113 @@ export default function LandingPage() {
       }
     };
 
-    missionScrambleFrameRef.current = requestAnimationFrame(step);
+    missionScrambleFrameRef.current =
+      requestAnimationFrame(step);
   };
 
   useEffect(() => {
     let active = true;
-    Promise.allSettled([getProteins(), getBiomaterials()]).then(([proteins, materials]) => {
+
+    Promise.allSettled([
+      getProteins(),
+      getBiomaterials(),
+    ]).then(([proteins, materials]) => {
       if (!active) return;
+
       setMetrics([
-        { label: "Proteins", value: proteins.status === "fulfilled" ? proteins.value.length : null },
-        { label: "Biomaterials", value: materials.status === "fulfilled" ? materials.value.length : null },
-        { label: "Interactions", value: null },
-        { label: "Imported today", value: null },
+        {
+          label: "Proteins",
+          value:
+            proteins.status === "fulfilled"
+              ? proteins.value.length
+              : null,
+        },
+        {
+          label: "Biomaterials",
+          value:
+            materials.status === "fulfilled"
+              ? materials.value.length
+              : null,
+        },
+        {
+          label: "Interactions",
+          value: null,
+        },
+        {
+          label: "Imported today",
+          value: null,
+        },
       ]);
     });
-    return () => { active = false; };
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
     const track = journeyLineRef.current;
     if (!track || prefersReducedMotion()) return;
 
-    // Drives the active journey stage from scroll position. A click/focus
-    // selection pins the stage temporarily, but any further scrolling hands
-    // control back to scroll-driven activation immediately — hovering never
-    // pins it, so the journey can't get permanently stuck.
     let frame: number | null = null;
+
     const evaluate = () => {
       frame = null;
+
       if (journeyManualRef.current) return;
+
       const rect = track.getBoundingClientRect();
       const vh = window.innerHeight || 1;
       const start = vh * 0.82;
       const end = vh * 0.22;
-      const progress = Math.min(Math.max((start - rect.top) / (start - end), 0), 1);
-      const index = Math.min(journey.length - 1, Math.floor(progress * journey.length));
-      setJourneyActive((prev) => (prev === index ? prev : index));
+
+      const progress = Math.min(
+        Math.max(
+          (start - rect.top) / (start - end),
+          0,
+        ),
+        1,
+      );
+
+      const index = Math.min(
+        journey.length - 1,
+        Math.floor(progress * journey.length),
+      );
+
+      setJourneyActive((prev) =>
+        prev === index ? prev : index,
+      );
     };
+
     const onScroll = () => {
       journeyManualRef.current = false;
-      if (frame === null) frame = requestAnimationFrame(evaluate);
+
+      if (frame === null) {
+        frame = requestAnimationFrame(evaluate);
+      }
     };
+
     const onResize = () => {
-      if (frame === null) frame = requestAnimationFrame(evaluate);
+      if (frame === null) {
+        frame = requestAnimationFrame(evaluate);
+      }
     };
 
     evaluate();
-    window.addEventListener("scroll", onScroll, { passive: true });
+
+    window.addEventListener("scroll", onScroll, {
+      passive: true,
+    });
+
     window.addEventListener("resize", onResize);
+
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
-      if (frame !== null) cancelAnimationFrame(frame);
+
+      if (frame !== null) {
+        cancelAnimationFrame(frame);
+      }
     };
   }, []);
 
@@ -541,86 +852,406 @@ export default function LandingPage() {
   };
 
   const previewJourneyStage = (index: number) => {
-    // Hover only nudges the active stage for the moment — it never pins
-    // scroll-driven activation off, so scrolling stays in control.
     setJourneyActive(index);
   };
 
   return (
     <main className="landing-page">
-      <header className={`landing-header ${scrolled ? "is-scrolled" : ""}`}>
-        <Link href="/" className="landing-wordmark" aria-label="ProMatDB home">
-          <span className="brand-glyph" aria-hidden="true"><i /><i /><i /><i /></span>
-          <span><b>ProMatDB</b><small>PROTEIN–BIOMATERIAL INTERACTION DATABASE</small></span>
+      <header
+        className={`landing-header ${
+          scrolled ? "is-scrolled" : ""
+        }`}
+      >
+        <Link
+          href="/"
+          className="landing-wordmark"
+          aria-label="ProMatDB home"
+        >
+          <span
+            className="brand-glyph"
+            aria-hidden="true"
+          >
+            <i />
+            <i />
+            <i />
+            <i />
+          </span>
+
+          <span>
+            <b>ProMatDB</b>
+            <small>
+              PROTEIN–BIOMATERIAL INTERACTION DATABASE
+            </small>
+          </span>
         </Link>
-        <nav className="landing-desktop-nav" aria-label="Landing navigation">
-          <a className="is-active" href="#top">Home</a>
-          {navItems.map((item) => <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`}>{item}</a>)}
+
+        <nav
+          className="landing-desktop-nav"
+          aria-label="Landing navigation"
+        >
+          <a className="is-active" href="#top">
+            Home
+          </a>
+
+          {navItems.map((item) => (
+            <a
+              key={item}
+              href={`#${item
+                .toLowerCase()
+                .replace(" ", "-")}`}
+            >
+              {item}
+            </a>
+          ))}
         </nav>
+
         <div className="landing-header-actions">
-          <Link href="/login" className="landing-signin">Sign In</Link>
-          <Link href="/workspace" className="landing-workspace">Open Workspace <ArrowRight size={15} /></Link>
+          <Link
+            href="/login"
+            className="landing-signin"
+          >
+            Sign In
+          </Link>
+
+          <Link
+            href="/workspace"
+            className="landing-workspace"
+          >
+            Open Workspace <ArrowRight size={15} />
+          </Link>
         </div>
-        <button className="landing-menu-toggle" aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
-        {menuOpen && <div className="landing-mobile-nav">{["Home", ...navItems].map((item) => <a key={item} href={item === "Home" ? "#top" : `#${item.toLowerCase().replace(" ", "-")}`} onClick={() => setMenuOpen(false)}>{item}<ChevronRight size={15} /></a>)}<div><Link href="/login" onClick={() => setMenuOpen(false)}>Sign In</Link><Link href="/workspace" className="landing-workspace" onClick={() => setMenuOpen(false)}>Open Workspace <ArrowRight size={15} /></Link></div></div>}
+
+        <button
+          className="landing-menu-toggle"
+          aria-label={
+            menuOpen ? "Close menu" : "Open menu"
+          }
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <X /> : <Menu />}
+        </button>
+
+        {menuOpen && (
+          <div className="landing-mobile-nav">
+            {["Home", ...navItems].map((item) => (
+              <a
+                key={item}
+                href={
+                  item === "Home"
+                    ? "#top"
+                    : `#${item
+                        .toLowerCase()
+                        .replace(" ", "-")}`
+                }
+                onClick={() => setMenuOpen(false)}
+              >
+                {item}
+                <ChevronRight size={15} />
+              </a>
+            ))}
+
+            <div>
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+              >
+                Sign In
+              </Link>
+
+              <Link
+                href="/workspace"
+                className="landing-workspace"
+                onClick={() => setMenuOpen(false)}
+              >
+                Open Workspace{" "}
+                <ArrowRight size={15} />
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
-      <section id="top" className="landing-hero-new">
-        <div className="hero-atmosphere" aria-hidden="true"><span /><span /><span /><span /></div>
-        <div className="hero-editorial-grid" aria-hidden="true" />
-        <div className="hero-copy-new">
-          <div className="landing-kicker"><span /> SCIENCE MEETS MATERIALS</div>
-          <h1>Connecting <em className="ink">Proteins</em> and <em className="blue">Biomaterials</em> <span>for a Better Tomorrow</span></h1>
-          <p className="hero-lede">ProMatDB is a next-generation platform for exploring protein–biomaterial interactions, enabling research in binding behavior, biocompatibility, and molecular structure data.</p>
-          <div className="hero-actions-new"><a href="#explore" className="button-dark">Explore interactions <ArrowRight size={17} /></a><a href="#science" className="button-light"><Play size={14} fill="currentColor" /> Watch the science</a></div>
-          <div className="hero-metrics"><CountMetric metric={metrics[0]} /><CountMetric metric={metrics[1]} /><CountMetric metric={metrics[2]} /><CountMetric metric={metrics[3]} /></div>
+      <section
+        id="top"
+        className="landing-hero-new"
+      >
+        <div
+          className="hero-atmosphere"
+          aria-hidden="true"
+        >
+          <span />
+          <span />
+          <span />
+          <span />
         </div>
-        <div className="hero-scene-new"><MolecularScene /><div className="scene-caption scene-caption-protein"><b>PROTEIN</b><span>Structure · Function<br />Interaction</span></div><div className="scene-caption scene-caption-material"><b>BIOMATERIAL</b><span>Properties · Compatibility<br />Design</span></div><div className="scene-caption scene-caption-interface"><b>INTERACTION</b><span>Binding interface · Active field</span></div></div>
+
+        <div
+          className="hero-editorial-grid"
+          aria-hidden="true"
+        />
+
+        <div className="hero-copy-new">
+          <div className="landing-kicker">
+            <span /> SCIENCE MEETS MATERIALS
+          </div>
+
+          <h1>
+            Connecting{" "}
+            <em className="ink">Proteins</em>{" "}
+            and{" "}
+            <em className="blue">
+              Biomaterials
+            </em>{" "}
+            <span>for a Better Tomorrow</span>
+          </h1>
+
+          <p className="hero-lede">
+            ProMatDB is a next-generation platform
+            for exploring protein–biomaterial
+            interactions, enabling research in
+            binding behavior, biocompatibility, and
+            molecular structure data.
+          </p>
+
+          <div className="hero-actions-new">
+            <a
+              href="#explore"
+              className="button-dark"
+            >
+              Explore interactions{" "}
+              <ArrowRight size={17} />
+            </a>
+
+            <a
+              href="#science"
+              className="button-light"
+            >
+              <Play
+                size={14}
+                fill="currentColor"
+              />{" "}
+              Watch the science
+            </a>
+          </div>
+
+          <div className="hero-metrics">
+            <CountMetric metric={metrics[0]} />
+            <CountMetric metric={metrics[1]} />
+            <CountMetric metric={metrics[2]} />
+            <CountMetric metric={metrics[3]} />
+          </div>
+        </div>
+
+        <div className="hero-scene-new">
+          <MolecularScene />
+
+          <div className="scene-caption scene-caption-protein">
+            <b>PROTEIN</b>
+            <span>
+              Structure · Function
+              <br />
+              Interaction
+            </span>
+          </div>
+
+          <div className="scene-caption scene-caption-material">
+            <b>BIOMATERIAL</b>
+            <span>
+              Properties · Compatibility
+              <br />
+              Design
+            </span>
+          </div>
+
+          <div className="scene-caption scene-caption-interface">
+            <b>INTERACTION</b>
+            <span>
+              Binding interface · Active field
+            </span>
+          </div>
+        </div>
       </section>
 
       <ScientificScrollTransition />
 
-      <section id="features" ref={featuresRef} className={`landing-section features-section section-reveal ${featuresVisible ? "is-visible" : ""}`}><div className="section-intro"><div className="landing-kicker"><span /> ONE PLATFORM, MANY LENSES</div><h2 className="scramble-heading" onPointerEnter={handleFeaturesHeadingEnter}><span aria-hidden="true">{featuresHeadingText}</span><span className="visually-hidden">{FEATURES_HEADING}</span></h2><p>Move fluently between biology, materials, interactions, and the visual language of molecular structure.</p></div><div className="feature-grid">{featureCards.map(({ icon: Icon, tone, eyebrow, title, copy, href }) => <Link href={href} key={title} className="feature-card" onMouseMove={handleFeatureCardGlow}><div className={`feature-icon ${tone}`}><Icon size={20} strokeWidth={1.5} /></div><small>{eyebrow}</small><h3>{title}</h3><p>{copy}</p><ArrowRight className="feature-arrow" size={19} /></Link>)}</div></section>
+      <section
+        id="features"
+        ref={featuresRef}
+        className={`landing-section features-section section-reveal ${
+          featuresVisible ? "is-visible" : ""
+        }`}
+      >
+        <div className="section-intro">
+          <div className="landing-kicker">
+            <span /> ONE PLATFORM, MANY LENSES
+          </div>
 
-      <section id="explore" className="landing-section journey-section section-reveal">
-        <div className="section-intro centered"><div className="landing-kicker"><span /> THE PROMATDB JOURNEY</div><h2>From Data to Discovery</h2><p>One connected path from the first sequence to a more meaningful research insight.</p></div>
-        <div className="journey-line" ref={journeyLineRef}>
+          <h2
+            className="scramble-heading"
+            onPointerEnter={handleFeaturesHeadingEnter}
+          >
+            <span aria-hidden="true">
+              {featuresHeadingText}
+            </span>
+
+            <span className="visually-hidden">
+              {FEATURES_HEADING}
+            </span>
+          </h2>
+
+          <p>
+            Move fluently between biology,
+            materials, interactions, and the visual
+            language of molecular structure.
+          </p>
+        </div>
+
+        <div className="feature-grid">
+          {featureCards.map(
+            ({
+              icon: Icon,
+              tone,
+              eyebrow,
+              title,
+              copy,
+              href,
+            }) => (
+              <Link
+                href={href}
+                key={title}
+                className="feature-card"
+                onMouseMove={handleFeatureCardGlow}
+              >
+                <div
+                  className={`feature-icon ${tone}`}
+                >
+                  <Icon
+                    size={20}
+                    strokeWidth={1.5}
+                  />
+                </div>
+
+                <small>{eyebrow}</small>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+
+                <ArrowRight
+                  className="feature-arrow"
+                  size={19}
+                />
+              </Link>
+            ),
+          )}
+        </div>
+      </section>
+
+      <section
+        id="explore"
+        className="landing-section journey-section section-reveal"
+      >
+        <div className="section-intro centered">
+          <div className="landing-kicker">
+            <span /> THE PROMATDB JOURNEY
+          </div>
+
+          <h2>From Data to Discovery</h2>
+
+          <p>
+            One connected path from the first
+            sequence to a more meaningful research
+            insight.
+          </p>
+        </div>
+
+        <div
+          className="journey-line"
+          ref={journeyLineRef}
+        >
           {journey.map((stage, index) => {
             const Icon = stage.icon;
-            const isActive = journeyActive === index;
+            const isActive =
+              journeyActive === index;
+
             return (
               <div
-                className={`journey-step ${isActive ? "is-active" : ""}`}
+                className={`journey-step ${
+                  isActive ? "is-active" : ""
+                }`}
                 key={stage.number}
-                onMouseEnter={() => previewJourneyStage(index)}
+                onMouseEnter={() =>
+                  previewJourneyStage(index)
+                }
               >
                 <button
                   type="button"
                   className="journey-step-trigger"
-                  onClick={() => selectJourneyStage(index)}
-                  onFocus={() => selectJourneyStage(index)}
+                  onClick={() =>
+                    selectJourneyStage(index)
+                  }
+                  onFocus={() =>
+                    selectJourneyStage(index)
+                  }
                   aria-expanded={isActive}
                   aria-controls={`journey-panel-${stage.number}`}
                 >
-                  <span className="journey-node"><Icon size={16} strokeWidth={1.6} /></span>
+                  <span className="journey-node">
+                    <Icon
+                      size={16}
+                      strokeWidth={1.6}
+                    />
+                  </span>
+
                   <small>{stage.number}</small>
                   <h3>{stage.title}</h3>
                   <p>{stage.tagline}</p>
                 </button>
-                <span className="journey-stem" aria-hidden="true" />
-                <div className="journey-panel" id={`journey-panel-${stage.number}`} role="region" aria-hidden={!isActive}>
+
+                <span
+                  className="journey-stem"
+                  aria-hidden="true"
+                />
+
+                <div
+                  className="journey-panel"
+                  id={`journey-panel-${stage.number}`}
+                  role="region"
+                  aria-hidden={!isActive}
+                >
                   <div className="journey-panel-inner">
-                    <span className="journey-panel-eyebrow"><Icon size={12} strokeWidth={1.6} />{stage.eyebrow}</span>
+                    <span className="journey-panel-eyebrow">
+                      <Icon
+                        size={12}
+                        strokeWidth={1.6}
+                      />
+                      {stage.eyebrow}
+                    </span>
+
                     <h4>{stage.headline}</h4>
                     <p>{stage.description}</p>
-                    {"bullets" in stage && stage.bullets && (
-                      <ul className="journey-panel-bullets">
-                        {stage.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
-                      </ul>
-                    )}
-                    {"cta" in stage && stage.cta && (
-                      <Link href={stage.cta.href} className="journey-panel-cta">{stage.cta.label} <ArrowRight size={13} /></Link>
-                    )}
+
+                    {"bullets" in stage &&
+                      stage.bullets && (
+                        <ul className="journey-panel-bullets">
+                          {stage.bullets.map(
+                            (bullet) => (
+                              <li key={bullet}>
+                                {bullet}
+                              </li>
+                            ),
+                          )}
+                        </ul>
+                      )}
+
+                    {"cta" in stage &&
+                      stage.cta && (
+                        <Link
+                          href={stage.cta.href}
+                          className="journey-panel-cta"
+                        >
+                          {stage.cta.label}{" "}
+                          <ArrowRight size={13} />
+                        </Link>
+                      )}
                   </div>
                 </div>
               </div>
@@ -629,20 +1260,944 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="science" className="science-showcase section-reveal"><div className="showcase-copy"><div className="landing-kicker light"><span /> A CLOSER LOOK</div><h2 ref={scienceHeadingRef} className="science-scan-heading" data-scan-text="See the science in three dimensions." onPointerMove={handleScienceHeadingMove} onPointerLeave={handleScienceHeadingLeave}>See the science in three dimensions.</h2><p>Scientific understanding is spatial. Explore the relationships between structure, surface, and interaction through a visual language built for discovery.</p><div className="showcase-notes"><span><Atom size={16} /> Conceptual molecular interface</span><span><Sparkles size={16} /> Interactive visualization layer</span></div><Link href="/workspace" className="button-cream">Open the workspace <ArrowRight size={16} /></Link></div><div className="showcase-visual"><MolecularScene compact focus={scienceFocus} /><div className="showcase-data" aria-label="Molecular visualization focus points"><button type="button" className={`science-focus-point ${scienceFocus === "protein" ? "is-active" : ""}`} aria-pressed={scienceFocus === "protein"} onPointerEnter={() => setScienceFocus("protein")} onPointerDown={(event) => { if (event.pointerType === "touch") setScienceFocus("protein"); }} onPointerLeave={handleSciencePointLeave} onFocus={() => setScienceFocus("protein")} onBlur={() => setScienceFocus("neutral")}><b>01</b><span>PROTEIN SURFACE</span><small>Structure</small></button><button type="button" className={`science-focus-point ${scienceFocus === "material" ? "is-active" : ""}`} aria-pressed={scienceFocus === "material"} onPointerEnter={() => setScienceFocus("material")} onPointerDown={(event) => { if (event.pointerType === "touch") setScienceFocus("material"); }} onPointerLeave={handleSciencePointLeave} onFocus={() => setScienceFocus("material")} onBlur={() => setScienceFocus("neutral")}><b>02</b><span>MATERIAL INTERFACE</span><small>Surface</small></button><button type="button" className={`science-focus-point ${scienceFocus === "binding" ? "is-active" : ""}`} aria-pressed={scienceFocus === "binding"} onPointerEnter={() => setScienceFocus("binding")} onPointerDown={(event) => { if (event.pointerType === "touch") setScienceFocus("binding"); }} onPointerLeave={handleSciencePointLeave} onFocus={() => setScienceFocus("binding")} onBlur={() => setScienceFocus("neutral")}><b>03</b><span>BINDING ZONE</span><small>Interaction</small></button></div></div></section>
+      <section
+        id="science"
+        className="science-showcase section-reveal"
+      >
+        <div className="showcase-copy">
+          <div className="landing-kicker light">
+            <span /> A CLOSER LOOK
+          </div>
 
+          <h2
+            ref={scienceHeadingRef}
+            className="science-scan-heading"
+            data-scan-text="See the science in three dimensions."
+            onPointerMove={handleScienceHeadingMove}
+            onPointerLeave={handleScienceHeadingLeave}
+          >
+            See the science in three dimensions.
+          </h2>
 
-      <section id="data-sources" ref={dataSourcesRef} className="landing-section sources-section section-reveal"><div className="section-intro"><div className="landing-kicker"><span /> SCIENTIFIC FOUNDATION</div><h2 className="data-sources-scramble-heading"><span aria-hidden="true">{dataSourcesHeadingText}</span><span className="visually-hidden">{DATA_SOURCES_HEADING}</span></h2><p>ProMatDB brings together trusted external sources, user-imported records, and computed results in one research context.</p></div><div className="source-grid">{sources.map(([name, copy, tag, tone, image, href], index) => <a className={`source-card ${tone}`} key={name} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${name} official website`}><img className="source-card-image" src={image} alt="" aria-hidden="true" /><div className="source-card-shade" aria-hidden="true" /><div className="source-card-content"><div className="source-top"><Database size={18} /><small>{tag}</small></div><div className="source-card-copy"><span className="source-card-index">0{index + 1}</span><h3>{name}</h3><p>{copy}</p></div><div className="source-card-footer"><span>VISIT SOURCE</span><ExternalLink size={15} /></div></div></a>)}</div></section>
+          <p>
+            Scientific understanding is spatial.
+            Explore the relationships between
+            structure, surface, and interaction
+            through a visual language built for
+            discovery.
+          </p>
 
-      <section ref={snapshotRef} className={`snapshot-section section-reveal ${snapshotVisible ? "snapshot-is-visible" : ""}`}><div className="snapshot-inner"><div className="snapshot-copy"><div className="landing-kicker light"><span /> PLATFORM SNAPSHOT</div><h2>A living research landscape.</h2><p>Safe public counts appear as the platform makes them available. No invented measurements, no black-box claims.</p><div className="snapshot-metrics">{metrics.map((metric) => <CountMetric metric={metric} key={metric.label} />)}</div></div><div className="snapshot-paper-stage" aria-label="ProMatDB research records"><div className={`snapshot-paper-stack ${snapshotOpening ? "is-opening" : ""}`}><article className={`snapshot-paper snapshot-paper-01 ${snapshotOpening ? "is-opening" : ""}`} role="button" tabIndex={0} aria-label="Open Protein research record" onClick={openSnapshotResearch} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openSnapshotResearch(); } }}><div className="snapshot-paper-inner"><small>01 / PROTEIN RECORD</small><strong>P02788</strong><h3>Lactotransferrin</h3><div className="snapshot-paper-diagram snapshot-protein-diagram" aria-hidden="true"><i /><i /><i /><i /></div><dl><div><dt>Structure</dt><dd>1B0L</dd></div><div><dt>Source</dt><dd>UniProt</dd></div></dl></div></article><article className="snapshot-paper snapshot-paper-02"><div className="snapshot-paper-inner"><small>02 / BIOMATERIAL RECORD</small><strong>Cellulose</strong><h3>Biomaterial</h3><div className="snapshot-paper-diagram snapshot-material-diagram" aria-hidden="true"><i /><i /><i /><i /><i /><i /></div><dl><div><dt>Category</dt><dd>Biomaterial</dd></div><div><dt>Source</dt><dd>ProMatDB</dd></div></dl></div></article><article className="snapshot-paper snapshot-paper-03"><div className="snapshot-paper-inner"><small>03 / INTERACTION</small><strong>Lactotransferrin <em>↔</em> Cellulose</strong><h3>Protein–Biomaterial interaction</h3><div className="snapshot-paper-diagram snapshot-binding-diagram" aria-hidden="true"><i /><i /><i /></div><dl><div><dt>Status</dt><dd>Available</dd></div></dl></div></article><article className="snapshot-paper snapshot-paper-04"><div className="snapshot-paper-inner"><small>04 / DOCKING RESULT</small><strong>AutoDock Vina</strong><h3>Computed binding pose</h3><div className="snapshot-paper-diagram snapshot-docking-diagram" aria-hidden="true"><i /><i /><i /><i /></div><dl><div><dt>Best pose</dt><dd>1</dd></div><div><dt>Binding energy</dt><dd>−2.88 kcal/mol</dd></div><div><dt>PDB</dt><dd>1B0L</dd></div></dl></div></article><article className="snapshot-paper snapshot-paper-05"><div className="snapshot-paper-inner"><small>05 / RESEARCH CONTEXT</small><strong>Connected evidence</strong><h3>One workspace</h3><div className="snapshot-context-map"><button type="button" className="snapshot-context-link snapshot-context-protein" onClick={() => openSnapshotResearch(0)} aria-label="Open Protein research document">Protein</button><button type="button" className="snapshot-context-link" onClick={() => openSnapshotResearch(1)} aria-label="Open Biomaterial research document">Biomaterial</button><button type="button" className="snapshot-context-link" onClick={() => openSnapshotResearch(2)} aria-label="Open Interaction research document">Interaction</button><button type="button" className="snapshot-context-link" onClick={() => openSnapshotResearch(3)} aria-label="Open Docking research document">Docking</button></div><p>Connected in one workspace</p></div></article></div></div>{snapshotResearchIndex !== null && (<div className="snapshot-research-view" role="dialog" aria-modal="true" aria-label="Research document sequence"><div className="snapshot-research-paper"><button type="button" className="snapshot-research-close" onClick={closeSnapshotResearch}>BACK / CLOSE <X size={14} /></button><div className="landing-kicker"><span /> RESEARCH DOCUMENT</div><div className="snapshot-research-index">0{snapshotResearchIndex + 1} / 04</div><h3>{snapshotResearchPages[snapshotResearchIndex].title}</h3><strong>{snapshotResearchPages[snapshotResearchIndex].code}</strong><p>{snapshotResearchPages[snapshotResearchIndex].detail}</p><div className="snapshot-research-rule" /><div className="snapshot-research-actions">{snapshotResearchIndex < snapshotResearchPages.length - 1 ? (<button type="button" className="snapshot-research-next" onClick={advanceSnapshotResearch}>NEXT <ArrowRight size={15} /></button>) : (<Link className="snapshot-research-next" href={snapshotResearchPages[snapshotResearchIndex].href}>OPEN FULL RECORD <ArrowRight size={15} /></Link>)}<Link className="snapshot-research-record-link" href={snapshotResearchPages[snapshotResearchIndex].href}>VIEW EXISTING {snapshotResearchPages[snapshotResearchIndex].eyebrow.split(" / ")[1]} PAGE</Link></div></div></div>)}</div></section>
+          <div className="showcase-notes">
+            <span>
+              <Atom size={16} /> Conceptual molecular
+              interface
+            </span>
 
-<section id="about" ref={missionRef} className="mission-section section-reveal"><div className="mission-curve" aria-hidden="true" /><div className="mission-copy"><div className="landing-kicker light"><span /> OUR MISSION</div><h2 className="mission-scramble-heading" aria-hidden="true"><span className="mission-line">{missionHeadingText.slice(0, 16)}</span><span className="mission-line"><span>{missionHeadingText.slice(17, 25)}</span><em>{missionHeadingText.slice(25, 32)}</em><span>{missionHeadingText.slice(32, 33)}</span></span><span className="mission-line"><em className="blue">{missionHeadingText.slice(34, 43)}</em><span>{missionHeadingText.slice(43, 47)}</span></span><span className="mission-line">{missionHeadingText.slice(48)}</span></h2><h2 className="visually-hidden">{MISSION_HEADING}</h2><p>We aim to provide a unified, reliable, and open platform for researchers to explore how proteins interact with biomaterials, accelerating discoveries in healthcare, biotechnology, and sustainable materials.</p></div><div className="mission-note">Research for a<br /><i>Healthier</i> and<br /><i>Sustainable World</i><span>✦</span></div></section>
+            <span>
+              <Sparkles size={16} /> Interactive
+              visualization layer
+            </span>
+          </div>
+
+          <Link
+            href="/workspace"
+            className="button-cream"
+          >
+            Open the workspace{" "}
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+
+        <div className="showcase-visual">
+          <MolecularScene
+            compact
+            focus={scienceFocus}
+          />
+
+          <div
+            className="showcase-data"
+            aria-label="Molecular visualization focus points"
+          >
+            <button
+              type="button"
+              className={`science-focus-point ${
+                scienceFocus === "protein"
+                  ? "is-active"
+                  : ""
+              }`}
+              aria-pressed={
+                scienceFocus === "protein"
+              }
+              onPointerEnter={() =>
+                setScienceFocus("protein")
+              }
+              onPointerDown={(event) => {
+                if (event.pointerType === "touch") {
+                  setScienceFocus("protein");
+                }
+              }}
+              onPointerLeave={
+                handleSciencePointLeave
+              }
+              onFocus={() =>
+                setScienceFocus("protein")
+              }
+              onBlur={() =>
+                setScienceFocus("neutral")
+              }
+            >
+              <b>01</b>
+              <span>PROTEIN SURFACE</span>
+              <small>Structure</small>
+            </button>
+
+            <button
+              type="button"
+              className={`science-focus-point ${
+                scienceFocus === "material"
+                  ? "is-active"
+                  : ""
+              }`}
+              aria-pressed={
+                scienceFocus === "material"
+              }
+              onPointerEnter={() =>
+                setScienceFocus("material")
+              }
+              onPointerDown={(event) => {
+                if (event.pointerType === "touch") {
+                  setScienceFocus("material");
+                }
+              }}
+              onPointerLeave={
+                handleSciencePointLeave
+              }
+              onFocus={() =>
+                setScienceFocus("material")
+              }
+              onBlur={() =>
+                setScienceFocus("neutral")
+              }
+            >
+              <b>02</b>
+              <span>MATERIAL INTERFACE</span>
+              <small>Surface</small>
+            </button>
+
+            <button
+              type="button"
+              className={`science-focus-point ${
+                scienceFocus === "binding"
+                  ? "is-active"
+                  : ""
+              }`}
+              aria-pressed={
+                scienceFocus === "binding"
+              }
+              onPointerEnter={() =>
+                setScienceFocus("binding")
+              }
+              onPointerDown={(event) => {
+                if (event.pointerType === "touch") {
+                  setScienceFocus("binding");
+                }
+              }}
+              onPointerLeave={
+                handleSciencePointLeave
+              }
+              onFocus={() =>
+                setScienceFocus("binding")
+              }
+              onBlur={() =>
+                setScienceFocus("neutral")
+              }
+            >
+              <b>03</b>
+              <span>BINDING ZONE</span>
+              <small>Interaction</small>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="data-sources"
+        ref={dataSourcesRef}
+        className="landing-section sources-section section-reveal"
+      >
+        <div className="section-intro">
+          <div className="landing-kicker">
+            <span /> SCIENTIFIC FOUNDATION
+          </div>
+
+          <h2 className="data-sources-scramble-heading">
+            <span aria-hidden="true">
+              {dataSourcesHeadingText}
+            </span>
+
+            <span className="visually-hidden">
+              {DATA_SOURCES_HEADING}
+            </span>
+          </h2>
+
+          <p>
+            ProMatDB brings together trusted
+            external sources, user-imported records,
+            and computed results in one research
+            context.
+          </p>
+        </div>
+
+        <div className="source-grid">
+          {sources.map(
+            (
+              [
+                name,
+                copy,
+                tag,
+                tone,
+                image,
+                href,
+              ],
+              index,
+            ) => (
+              <a
+                className={`source-card ${tone}`}
+                key={name}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Visit ${name} official website`}
+              >
+                <img
+                  className="source-card-image"
+                  src={image}
+                  alt=""
+                  aria-hidden="true"
+                />
+
+                <div
+                  className="source-card-shade"
+                  aria-hidden="true"
+                />
+
+                <div className="source-card-content">
+                  <div className="source-top">
+                    <Database size={18} />
+                    <small>{tag}</small>
+                  </div>
+
+                  <div className="source-card-copy">
+                    <span className="source-card-index">
+                      0{index + 1}
+                    </span>
+
+                    <h3>{name}</h3>
+                    <p>{copy}</p>
+                  </div>
+
+                  <div className="source-card-footer">
+                    <span>VISIT SOURCE</span>
+                    <ExternalLink size={15} />
+                  </div>
+                </div>
+              </a>
+            ),
+          )}
+        </div>
+      </section>
+
+      <section
+        ref={snapshotRef}
+        className={`snapshot-section section-reveal ${
+          snapshotVisible
+            ? "snapshot-is-visible"
+            : ""
+        }`}
+      >
+        <div className="snapshot-inner">
+          <div className="snapshot-copy">
+            <div className="landing-kicker light">
+              <span /> PLATFORM SNAPSHOT
+            </div>
+
+            <h2>A living research landscape.</h2>
+
+            <p>
+              Safe public counts appear as the
+              platform makes them available. No
+              invented measurements, no black-box
+              claims.
+            </p>
+
+            <div className="snapshot-metrics">
+              {metrics.map((metric) => (
+                <CountMetric
+                  metric={metric}
+                  key={metric.label}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div
+            className="snapshot-paper-stage"
+            aria-label="ProMatDB research records"
+          >
+            <div
+              className={`snapshot-paper-stack ${
+                snapshotOpening
+                  ? "is-opening"
+                  : ""
+              }`}
+            >
+              <article
+                className={`snapshot-paper snapshot-paper-01 ${
+                  snapshotOpening
+                    ? "is-opening"
+                    : ""
+                }`}
+                role="button"
+                tabIndex={0}
+                aria-label="Open Protein research record"
+                onClick={openSnapshotResearch}
+                onKeyDown={(event) => {
+                  if (
+                    event.key === "Enter" ||
+                    event.key === " "
+                  ) {
+                    event.preventDefault();
+                    openSnapshotResearch();
+                  }
+                }}
+              >
+                <div className="snapshot-paper-inner">
+                  <small>
+                    01 / PROTEIN RECORD
+                  </small>
+
+                  <strong>P02788</strong>
+
+                  <h3>Lactotransferrin</h3>
+
+                  <div
+                    className="snapshot-paper-diagram snapshot-protein-diagram"
+                    aria-hidden="true"
+                  >
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                  </div>
+
+                  <dl>
+                    <div>
+                      <dt>Structure</dt>
+                      <dd>1B0L</dd>
+                    </div>
+
+                    <div>
+                      <dt>Source</dt>
+                      <dd>UniProt</dd>
+                    </div>
+                  </dl>
+                </div>
+              </article>
+
+              <article className="snapshot-paper snapshot-paper-02">
+                <div className="snapshot-paper-inner">
+                  <small>
+                    02 / BIOMATERIAL RECORD
+                  </small>
+
+                  <strong>Cellulose</strong>
+
+                  <h3>Biomaterial</h3>
+
+                  <div
+                    className="snapshot-paper-diagram snapshot-material-diagram"
+                    aria-hidden="true"
+                  >
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                  </div>
+
+                  <dl>
+                    <div>
+                      <dt>Category</dt>
+                      <dd>Biomaterial</dd>
+                    </div>
+
+                    <div>
+                      <dt>Source</dt>
+                      <dd>ProMatDB</dd>
+                    </div>
+                  </dl>
+                </div>
+              </article>
+
+              <article className="snapshot-paper snapshot-paper-03">
+                <div className="snapshot-paper-inner">
+                  <small>
+                    03 / INTERACTION
+                  </small>
+
+                  <strong>
+                    Lactotransferrin{" "}
+                    <em>↔</em> Cellulose
+                  </strong>
+
+                  <h3>
+                    Protein–Biomaterial
+                    interaction
+                  </h3>
+
+                  <div
+                    className="snapshot-paper-diagram snapshot-binding-diagram"
+                    aria-hidden="true"
+                  >
+                    <i />
+                    <i />
+                    <i />
+                  </div>
+
+                  <dl>
+                    <div>
+                      <dt>Status</dt>
+                      <dd>Available</dd>
+                    </div>
+                  </dl>
+                </div>
+              </article>
+
+              <article className="snapshot-paper snapshot-paper-04">
+                <div className="snapshot-paper-inner">
+                  <small>
+                    04 / DOCKING RESULT
+                  </small>
+
+                  <strong>AutoDock Vina</strong>
+
+                  <h3>
+                    Computed binding pose
+                  </h3>
+
+                  <div
+                    className="snapshot-paper-diagram snapshot-docking-diagram"
+                    aria-hidden="true"
+                  >
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                  </div>
+
+                  <dl>
+                    <div>
+                      <dt>Best pose</dt>
+                      <dd>1</dd>
+                    </div>
+
+                    <div>
+                      <dt>Binding energy</dt>
+                      <dd>−2.88 kcal/mol</dd>
+                    </div>
+
+                    <div>
+                      <dt>PDB</dt>
+                      <dd>1B0L</dd>
+                    </div>
+                  </dl>
+                </div>
+              </article>
+
+              <article className="snapshot-paper snapshot-paper-05">
+                <div className="snapshot-paper-inner">
+                  <small>
+                    05 / RESEARCH CONTEXT
+                  </small>
+
+                  <strong>
+                    Connected evidence
+                  </strong>
+
+                  <h3>One workspace</h3>
+
+                  <div className="snapshot-context-map">
+                    <button
+                      type="button"
+                      className="snapshot-context-link snapshot-context-protein"
+                      onClick={() =>
+                        openSnapshotResearch(0)
+                      }
+                      aria-label="Open Protein research document"
+                    >
+                      Protein
+                    </button>
+
+                    <button
+                      type="button"
+                      className="snapshot-context-link"
+                      onClick={() =>
+                        openSnapshotResearch(1)
+                      }
+                      aria-label="Open Biomaterial research document"
+                    >
+                      Biomaterial
+                    </button>
+
+                    <button
+                      type="button"
+                      className="snapshot-context-link"
+                      onClick={() =>
+                        openSnapshotResearch(2)
+                      }
+                      aria-label="Open Interaction research document"
+                    >
+                      Interaction
+                    </button>
+
+                    <button
+                      type="button"
+                      className="snapshot-context-link"
+                      onClick={() =>
+                        openSnapshotResearch(3)
+                      }
+                      aria-label="Open Docking research document"
+                    >
+                      Docking
+                    </button>
+                  </div>
+
+                  <p>
+                    Connected in one workspace
+                  </p>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          {snapshotResearchIndex !== null && (
+            <div
+              className="snapshot-research-view"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Research document sequence"
+            >
+              <div className="snapshot-research-paper">
+                <button
+                  type="button"
+                  className="snapshot-research-close"
+                  onClick={
+                    closeSnapshotResearch
+                  }
+                >
+                  BACK / CLOSE{" "}
+                  <X size={14} />
+                </button>
+
+                <div className="landing-kicker">
+                  <span /> RESEARCH DOCUMENT
+                </div>
+
+                <div className="snapshot-research-index">
+                  0{snapshotResearchIndex + 1} / 04
+                </div>
+
+                <h3>
+                  {
+                    snapshotResearchPages[
+                      snapshotResearchIndex
+                    ].title
+                  }
+                </h3>
+
+                <strong>
+                  {
+                    snapshotResearchPages[
+                      snapshotResearchIndex
+                    ].code
+                  }
+                </strong>
+
+                <p>
+                  {
+                    snapshotResearchPages[
+                      snapshotResearchIndex
+                    ].detail
+                  }
+                </p>
+
+                <div className="snapshot-research-rule" />
+
+                <div className="snapshot-research-actions">
+                  {snapshotResearchIndex <
+                  snapshotResearchPages.length - 1 ? (
+                    <button
+                      type="button"
+                      className="snapshot-research-next"
+                      onClick={
+                        advanceSnapshotResearch
+                      }
+                    >
+                      NEXT{" "}
+                      <ArrowRight size={15} />
+                    </button>
+                  ) : (
+                    <Link
+                      className="snapshot-research-next"
+                      href={
+                        snapshotResearchPages[
+                          snapshotResearchIndex
+                        ].href
+                      }
+                    >
+                      OPEN FULL RECORD{" "}
+                      <ArrowRight size={15} />
+                    </Link>
+                  )}
+
+                  <Link
+                    className="snapshot-research-record-link"
+                    href={
+                      snapshotResearchPages[
+                        snapshotResearchIndex
+                      ].href
+                    }
+                  >
+                    VIEW EXISTING{" "}
+                    {
+                      snapshotResearchPages[
+                        snapshotResearchIndex
+                      ].eyebrow.split(
+                        " / ",
+                      )[1]
+                    }{" "}
+                    PAGE
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section
+        id="about"
+        ref={missionRef}
+        className="mission-section section-reveal"
+      >
+        <div
+          className="mission-curve"
+          aria-hidden="true"
+        />
+
+        <div className="mission-copy">
+          <div className="landing-kicker light">
+            <span /> OUR MISSION
+          </div>
+
+          <h2
+            className="mission-scramble-heading"
+            aria-hidden="true"
+          >
+            <span className="mission-line">
+              {missionHeadingText.slice(0, 16)}
+            </span>
+
+            <span className="mission-line">
+              <span>
+                {missionHeadingText.slice(17, 25)}
+              </span>
+
+              <em>
+                {missionHeadingText.slice(25, 32)}
+              </em>
+
+              <span>
+                {missionHeadingText.slice(32, 33)}
+              </span>
+            </span>
+
+            <span className="mission-line">
+              <em className="blue">
+                {missionHeadingText.slice(34, 43)}
+              </em>
+
+              <span>
+                {missionHeadingText.slice(43, 47)}
+              </span>
+            </span>
+
+            <span className="mission-line">
+              {missionHeadingText.slice(48)}
+            </span>
+          </h2>
+
+          <h2 className="visually-hidden">
+            {MISSION_HEADING}
+          </h2>
+
+          <p>
+            We aim to provide a unified, reliable,
+            and open platform for researchers to
+            explore how proteins interact with
+            biomaterials, accelerating discoveries
+            in healthcare, biotechnology, and
+            sustainable materials.
+          </p>
+        </div>
+
+        <div className="mission-note">
+          Research for a
+          <br />
+          <i>Healthier</i> and
+          <br />
+          <i>Sustainable World</i>
+          <span>✦</span>
+        </div>
+      </section>
+
       <BiotechParallaxSection />
 
+      <section className="final-cta-section section-reveal">
+        <div className="final-cta-mark">
+          <Atom size={26} />
+        </div>
 
-      <section className="final-cta-section section-reveal"><div className="final-cta-mark"><Atom size={26} /></div><div><div className="landing-kicker light"><span /> YOUR NEXT QUESTION STARTS HERE</div><h2>Explore the molecular interface.</h2><p>Discover proteins, biomaterials, interactions, and molecular structures through one unified research platform.</p></div><div className="final-cta-actions"><Link href="/workspace" className="button-cream">Open Workspace <ArrowRight size={16} /></Link><Link href="#features" className="button-outline-light">Explore ProMatDB</Link></div></section>
+        <div>
+          <div className="landing-kicker light">
+            <span /> YOUR NEXT QUESTION STARTS HERE
+          </div>
 
-            <footer id="contact" className="landing-footer-new"><svg className="footer-gooey-defs" aria-hidden="true"><defs><filter id="footerGooey"><feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" /><feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -10" result="gooey" /><feBlend in="SourceGraphic" in2="gooey" /></filter></defs></svg><button type="button" className={`footer-cube ${footerCubeBurst ? "is-opening" : ""}`} onClick={handleFooterCubeClick} aria-label="Inspect ProMatDB scientific cube"><span className="footer-cube-face footer-cube-face-front"><small>PDB</small><i /><i /><i /></span><span className="footer-cube-face footer-cube-face-back" /><span className="footer-cube-face footer-cube-face-left" /><span className="footer-cube-face footer-cube-face-right" /><span className="footer-cube-face footer-cube-face-top"><small>PRO</small></span><span className="footer-cube-face footer-cube-face-bottom" /><span className="footer-cube-particles" aria-hidden="true"><i /><i /><i /><i /><i /></span></button><div className="footer-brand"><Link href="/" className="landing-wordmark"><span className="brand-glyph" aria-hidden="true"><i /><i /><i /><i /></span><span><b>ProMatDB</b><small>PROTEIN–BIOMATERIAL INTERACTION DATABASE</small></span></Link><p>Making molecular interfaces<br />a little more understandable.</p></div><div><small className="footer-heading">Navigate</small><a href="#top">Home</a><a href="#features">Features</a><a href="#data-sources">Data Sources</a><a href="#explore">Explore</a><a href="#about">About</a></div><div><small className="footer-heading">Platform</small><Link href="/proteins">Proteins</Link><Link href="/biomaterials">Biomaterials</Link><Link href="/interactions">Interactions</Link><Link href="/docking">Docking</Link><Link href="/workspace">3D Visualization</Link></div><div><small className="footer-heading">Access</small><Link href="/login">Sign In</Link><Link href="/workspace">Open Workspace</Link><span className="footer-email">hello@promatdb.org</span></div><div className="footer-bottom"><span>© 2026 ProMatDB. A research interface for protein–biomaterial discovery.</span><span>DISCOVER · ANALYZE · VISUALIZE · INNOVATE</span></div><div className="footer-flame-bottom" aria-hidden="true"><svg className="footer-tide-svg" viewBox="0 0 1440 70" preserveAspectRatio="none"><path className="footer-tide-layer tide-back" d="M0 44 C180 24 300 54 480 38 C660 22 790 52 960 36 C1140 20 1260 50 1440 32 L1440 70 L0 70 Z" /><path className="footer-tide-layer tide-mid" d="M0 52 C160 38 300 60 470 46 C650 31 790 59 960 43 C1120 28 1280 56 1440 42 L1440 70 L0 70 Z" /><path className="footer-tide-layer tide-front" d="M0 59 C170 47 310 66 500 54 C680 42 820 67 1000 52 C1180 39 1290 63 1440 51 L1440 70 L0 70 Z" /></svg></div></footer>
+          <h2>
+            Explore the molecular interface.
+          </h2>
+
+          <p>
+            Discover proteins, biomaterials,
+            interactions, and molecular structures
+            through one unified research platform.
+          </p>
+        </div>
+
+        <div className="final-cta-actions">
+          <Link
+            href="/workspace"
+            className="button-cream"
+          >
+            Open Workspace{" "}
+            <ArrowRight size={16} />
+          </Link>
+
+          <Link
+            href="#features"
+            className="button-outline-light"
+          >
+            Explore ProMatDB
+          </Link>
+        </div>
+      </section>
+
+      <footer
+        id="contact"
+        className="landing-footer-new"
+      >
+        <svg
+          className="footer-gooey-defs"
+          aria-hidden="true"
+        >
+          <defs>
+            <filter id="footerGooey">
+              <feGaussianBlur
+                in="SourceGraphic"
+                stdDeviation="7"
+                result="blur"
+              />
+
+              <feColorMatrix
+                in="blur"
+                mode="matrix"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -10"
+                result="gooey"
+              />
+
+              <feBlend
+                in="SourceGraphic"
+                in2="gooey"
+              />
+            </filter>
+          </defs>
+        </svg>
+
+        <button
+          type="button"
+          className={`footer-cube ${
+            footerCubeBurst ? "is-opening" : ""
+          }`}
+          onClick={handleFooterCubeClick}
+          aria-label="Inspect ProMatDB scientific cube"
+        >
+          <span className="footer-cube-face footer-cube-face-front">
+            <small>PDB</small>
+            <i />
+            <i />
+            <i />
+          </span>
+
+          <span className="footer-cube-face footer-cube-face-back" />
+          <span className="footer-cube-face footer-cube-face-left" />
+          <span className="footer-cube-face footer-cube-face-right" />
+
+          <span className="footer-cube-face footer-cube-face-top">
+            <small>PRO</small>
+          </span>
+
+          <span className="footer-cube-face footer-cube-face-bottom" />
+
+          <span
+            className="footer-cube-particles"
+            aria-hidden="true"
+          >
+            <i />
+            <i />
+            <i />
+            <i />
+            <i />
+          </span>
+        </button>
+
+        <div className="footer-brand">
+          <Link
+            href="/"
+            className="landing-wordmark"
+          >
+            <span
+              className="brand-glyph"
+              aria-hidden="true"
+            >
+              <i />
+              <i />
+              <i />
+              <i />
+            </span>
+
+            <span>
+              <b>ProMatDB</b>
+              <small>
+                PROTEIN–BIOMATERIAL INTERACTION
+                DATABASE
+              </small>
+            </span>
+          </Link>
+
+          <p>
+            Making molecular interfaces
+            <br />
+            a little more understandable.
+          </p>
+        </div>
+
+        <div>
+          <small className="footer-heading">
+            Navigate
+          </small>
+
+          <a href="#top">Home</a>
+          <a href="#features">Features</a>
+          <a href="#data-sources">
+            Data Sources
+          </a>
+          <a href="#explore">Explore</a>
+          <a href="#about">About</a>
+        </div>
+
+        <div>
+          <small className="footer-heading">
+            Platform
+          </small>
+
+          <Link href="/proteins">
+            Proteins
+          </Link>
+
+          <Link href="/biomaterials">
+            Biomaterials
+          </Link>
+
+          <Link href="/interactions">
+            Interactions
+          </Link>
+
+          <Link href="/docking">
+            Docking
+          </Link>
+
+          <Link href="/workspace">
+            3D Visualization
+          </Link>
+        </div>
+
+        <div>
+          <small className="footer-heading">
+            Access
+          </small>
+
+          <Link href="/login">Sign In</Link>
+
+          <Link href="/workspace">
+            Open Workspace
+          </Link>
+
+          <span className="footer-email">
+            hello@promatdb.org
+          </span>
+        </div>
+
+        <div className="footer-bottom">
+          <span>
+            © 2026 ProMatDB. A research interface
+            for protein–biomaterial discovery.
+          </span>
+
+          <span>
+            DISCOVER · ANALYZE · VISUALIZE ·
+            INNOVATE
+          </span>
+        </div>
+
+        <div
+          className="footer-flame-bottom"
+          aria-hidden="true"
+        >
+          <svg
+            className="footer-tide-svg"
+            viewBox="0 0 1440 70"
+            preserveAspectRatio="none"
+          >
+            <path
+              className="footer-tide-layer tide-back"
+              d="M0 44 C180 24 300 54 480 38 C660 22 790 52 960 36 C1140 20 1260 50 1440 32 L1440 70 L0 70 Z"
+            />
+
+            <path
+              className="footer-tide-layer tide-mid"
+              d="M0 52 C160 38 300 60 470 46 C650 31 790 59 960 43 C1120 28 1280 56 1440 42 L1440 70 L0 70 Z"
+            />
+
+            <path
+              className="footer-tide-layer tide-front"
+              d="M0 59 C170 47 310 66 500 54 C680 42 820 67 1000 52 C1180 39 1290 63 1440 51 L1440 70 L0 70 Z"
+            />
+          </svg>
+        </div>
+      </footer>
+
+      <ZuzuCompanion />
     </main>
   );
 }
